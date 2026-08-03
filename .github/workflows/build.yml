@@ -25,7 +25,7 @@ jobs:
     
     - name: Build EXE with PyInstaller
       run: |
-        pyinstaller --name=JDHubSchool --onefile --windowed --noconfirm --clean app_launcher.py
+        pyinstaller --name=JDHubSchool --onefile --windowed --noconfirm --clean --icon=app.ico app_launcher.py
     
     - name: Upload EXE as Artifact
       uses: actions/upload-artifact@v4
