@@ -1,0 +1,350 @@
+================================================================================
+JD HUB ENTERPRISE SCHOOL MANAGEMENT SYSTEM
+Complete Setup & Installation Guide
+================================================================================
+
+DEVELOPED BY: JD Hub
+CONTACT: 0754687597
+EMAIL: jdhubtech@gmail.com
+WEBSITE: www.jdhubtech.com
+VERSION: 1.0.0
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+
+1. System Overview
+2. System Requirements
+3. Installation Options
+4. Building Windows Executable
+5. Creating Professional Installer
+6. Activation Process
+7. Initial Setup
+8. Parent Portal Setup
+9. M-Pesa Configuration
+10. Troubleshooting
+11. Contact Support
+
+================================================================================
+SECTION 1: SYSTEM OVERVIEW
+================================================================================
+
+The JD Hub Enterprise School Management System is a comprehensive, all-in-one
+solution for managing schools, universities, and institutions in Uganda and
+across Africa.
+
+KEY FEATURES:
+- Hardware-locked licensing
+- 7 role-based access levels
+- M-Pesa payment integration
+- Online examination (CBT)
+- AI grade predictions
+- Parent portal with QR code
+- Offline mode
+- Cloud backup
+- Dark/Light themes
+- 50+ enterprise features
+
+================================================================================
+SECTION 2: SYSTEM REQUIREMENTS
+================================================================================
+
+MINIMUM:
+- Windows 10/11 or Linux
+- Python 3.8+
+- 4GB RAM
+- 500MB disk space
+- Internet (for activation)
+
+RECOMMENDED:
+- Windows 10/11 64-bit
+- 8GB RAM
+- 2GB disk space
+- Wi-Fi network (for parent portal)
+
+================================================================================
+SECTION 3: INSTALLATION OPTIONS
+================================================================================
+
+OPTION A: RUN DIRECTLY (NO INSTALLATION)
+----------------------------------------
+1. Install Python 3.8+ from https://python.org
+2. Download the package
+3. Extract to a folder
+4. Open Command Prompt in the folder
+5. Run: pip install -r requirements.txt
+6. Run: python app_launcher.py
+
+OPTION B: BUILD WINDOWS EXECUTABLE
+----------------------------------
+1. Install Python 3.8+
+2. Download and extract the package
+3. Double-click "build_for_windows.bat"
+4. Wait for build to complete (5-15 minutes)
+5. Find JDHubSchoolManagement.exe in the "dist" folder
+
+OPTION C: PROFESSIONAL INSTALLER (RECOMMENDED)
+----------------------------------------------
+1. Download Inno Setup from https://jrsoftware.org/isinfo.php
+2. Install Inno Setup
+3. Open installer.iss in Inno Setup Compiler
+4. Press Ctrl+F9 to compile
+5. Find the installer in the "installer" folder
+6. Distribute the installer to clients
+
+================================================================================
+SECTION 4: BUILDING WINDOWS EXECUTABLE
+================================================================================
+
+Step 1: Install Python
+----------------------
+1. Go to https://python.org/downloads
+2. Download Python 3.8 or higher
+3. Run the installer
+4. IMPORTANT: Check "Add Python to PATH"
+5. Click "Install Now"
+
+Step 2: Install Build Tools
+---------------------------
+1. Open Command Prompt
+2. Run: pip install pyinstaller
+
+Step 3: Build the Executable
+----------------------------
+1. Extract the downloaded package
+2. Navigate to the folder
+3. Double-click "build_for_windows.bat"
+4. Wait for the build to complete
+5. Find your executable in "dist\JDHubSchoolManagement.exe"
+
+Step 4: Test
+------------
+1. Go to the "dist" folder
+2. Double-click "JDHubSchoolManagement.exe"
+3. Verify it starts without errors
+
+================================================================================
+SECTION 5: CREATING PROFESSIONAL INSTALLER
+================================================================================
+
+1. Download Inno Setup from: https://jrsoftware.org/isinfo.php
+2. Install Inno Setup with default options
+3. Navigate to the extracted package folder
+4. Double-click "installer.iss"
+5. Inno Setup Compiler will open
+6. Press Ctrl+F9 (or click Compile menu > Compile)
+7. Wait for compilation to complete
+8. Find your installer at: "installer\JDHubSMS_Setup_v1.0.0.exe"
+
+The installer will:
+- Create Start Menu shortcuts
+- Create Desktop shortcut (optional)
+- Register in Add/Remove Programs
+- Include uninstaller
+
+================================================================================
+SECTION 6: ACTIVATION PROCESS
+================================================================================
+
+FIRST RUN - ACTIVATION SCREEN:
+1. Run the application
+2. You will see the Machine ID displayed
+3. Contact JD Hub with:
+   - Machine ID
+   - School/Institution name
+   - Number of students
+
+JD HUB WILL PROVIDE:
+- License Key (format: XXXX-XXXX-XXXX-XXXX)
+- Expiry date
+- Feature tier
+
+TO ACTIVATE:
+1. Enter the License Key
+2. Click "Activate"
+3. Restart the application
+4. Login with your credentials
+
+FOR VENDORS - GENERATING KEYS:
+1. Run license_generator.py on your computer
+2. Enter client's Machine ID
+3. Select license tier
+4. Get the generated License Key
+5. Share with client
+
+================================================================================
+SECTION 7: INITIAL SETUP
+================================================================================
+
+1. LOGIN
+   Username: Jordan
+   Password: admin123
+
+2. CONFIGURE SCHOOL
+   Go to Settings
+   - Enter school name
+   - Upload school logo
+   - Enter address and contact info
+   - Set registration prefix (e.g., SCH, STU)
+
+3. ADD STAFF
+   Go to Staff > Add New
+   - Enter details
+   - Assign roles (Admin, Teacher, Bursar, etc.)
+
+4. SETUP CLASSES
+   Go to Streams > Add Stream
+   - Create classes (Senior 1 North, P.5 West, etc.)
+   - Assign class teachers
+
+5. ADD SUBJECTS
+   Go to Subjects > Add Subject
+   - Create subjects
+   - Assign to relevant classes
+
+6. REGISTER STUDENTS
+   Go to Registration
+   - Add student details
+   - Assign to class
+   - Add parent/guardian info
+
+7. SETUP FEES
+   Go to Fees > Fee Structure
+   - Create fee items
+   - Set amounts per class
+   - Set due dates
+
+8. CONFIGURE TERM
+   Go to Academic Terms
+   - Set current term
+   - Set academic year
+
+================================================================================
+SECTION 8: PARENT PORTAL SETUP
+================================================================================
+
+The Parent Portal allows parents to view their child's information on their
+phones. Here's how to set it up:
+
+1. CONNECT TO NETWORK
+   - Ensure the school computer is on the local network
+   - The app will auto-detect the local IP
+
+2. DISPLAY QR CODE
+   - Go to Parent Portal in the sidebar
+   - The QR code will be displayed automatically
+   - The URL shown is: http://192.168.x.x:8000
+
+3. PARENT ACCESS
+   - Parent opens phone camera
+   - Scans the QR code
+   - Browser opens to the portal
+   - Login with:
+     * Username: Student's ID (e.g., SCH/2024/001)
+     * Password: Parent's registered phone number
+
+4. WHAT PARENTS CAN VIEW
+   - Report cards
+   - Fee balance
+   - Payment history
+   - Attendance
+   - Announcements
+
+FOR REMOTE ACCESS (INTERNET):
+- Use ngrok to create a public URL
+- Share the URL with parents via WhatsApp
+
+================================================================================
+SECTION 9: M-PESA CONFIGURATION
+================================================================================
+
+The M-Pesa integration allows parents to pay school fees via mobile money.
+
+TO SETUP M-PESA:
+
+1. GET SAFARICOM CREDENTIALS
+   - Register at https://developer.safaricom.co.ke
+   - Create an app
+   - Get Consumer Key and Consumer Secret
+   - Get your Business Till Number
+
+2. CONFIGURE IN APP
+   - Go to M-Pesa Settings
+   - Enter your credentials:
+     * Consumer Key
+     * Consumer Secret
+     * Business Till Number
+     * Passkey
+
+3. TEST PAYMENTS
+   - Make a test payment
+   - Verify it works
+
+FOR SETUP ASSISTANCE:
+Contact JD Hub: 0754687597
+
+================================================================================
+SECTION 10: TROUBLESHOOTING
+================================================================================
+
+PROBLEM: Application doesn't start
+SOLUTION: 
+- Ensure Python is installed
+- Run: pip install -r requirements.txt
+- Check for error messages in terminal
+
+PROBLEM: QR code not scanning
+SOLUTION:
+- Ensure phone is on same Wi-Fi as school computer
+- Try opening URL directly in browser
+- Check if firewall is blocking
+
+PROBLEM: M-Pesa payments failing
+SOLUTION:
+- Verify Safaricom credentials
+- Check internet connection
+- Ensure correct phone format (256...)
+
+PROBLEM: License activation fails
+SOLUTION:
+- Verify Machine ID matches
+- Contact JD Hub: 0754687597
+
+PROBLEM: Parent can't login
+SOLUTION:
+- Verify student ID is correct
+- Verify parent phone matches database
+- Reset password if needed
+
+PROBLEM: Reports not generating
+SOLUTION:
+- Install reportlab: pip install reportlab
+- Check data exists for selected filters
+
+================================================================================
+SECTION 11: CONTACT SUPPORT
+================================================================================
+
+JD HUB - YOUR TECHNOLOGY PARTNER
+
+CONTACT:
+Phone: 0754687597
+WhatsApp: +256 754687597
+Email: jdhubtech@gmail.com
+Website: www.jdhubtech.com
+
+SUPPORT HOURS:
+Monday - Friday: 8:00 AM - 6:00 PM
+Saturday: 9:00 AM - 1:00 PM
+
+SERVICES:
+- Technical Support
+- Installation Assistance
+- Custom Features
+- Staff Training
+- System Updates
+- Data Migration
+
+================================================================================
+THANK YOU FOR CHOOSING JD HUB!
+================================================================================
