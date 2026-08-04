@@ -25,7 +25,7 @@ jobs:
     
     - name: Build EXE
       run: |
-        pyinstaller --name=JDHubSchool --onefile --noconfirm --clean --hidden-import=tkinter --hidden-import=tkinter.ttk --hidden-import=tkinter.messagebox main_app.py
+        pyinstaller --name=JDHubSchool --onefile --noconfirm --clean main_app.py
     
     - name: Upload EXE
       uses: actions/upload-artifact@v4
