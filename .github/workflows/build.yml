@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      with:
+        lfs: true
     
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -25,7 +27,7 @@ jobs:
     
     - name: Build EXE with PyInstaller
       run: |
-        pyinstaller --name=JDHubSchool --onefile --windowed --noconfirm --clean --icon=app.ico main_app.py
+        pyinstaller --name=JDHubSchool --onefile --noconfirm --clean --icon=app.ico main_app.py
     
     - name: Upload EXE as Artifact
       uses: actions/upload-artifact@v4
