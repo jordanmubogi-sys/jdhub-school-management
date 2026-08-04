@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JD HUB - License Key Generator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { background: #1e293b; border-radius: 16px; padding: 40px; max-width: 600px; width: 100%; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        h1 { color: #3b82f6; font-size: 28px; text-align: center; margin-bottom: 10px; }
+        .subtitle { color: #94a3b8; text-align: center; margin-bottom: 30px; font-size: 14px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; color: #94a3b8; font-size: 14px; margin-bottom: 8px; font-weight: 500; }
+        input { width: 100%; padding: 14px; background: #0f172a; border: 2px solid #334155; border-radius: 8px; color: white; font-size: 16px; }
+        input:focus { outline: none; border-color: #3b82f6; }
+        .btn { width: 100%; padding: 16px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .btn:hover { background: #2563eb; }
+        .result { margin-top: 30px; padding: 25px; background: #0f172a; border-radius: 12px; display: none; }
+        .result h3 { color: #22c55e; margin-bottom: 15px; font-size: 18px; }
+        .license-key { background: #1e293b; padding: 15px; border-radius: 8px; text-align: center; font-family: monospace; font-size: 20px; color: #3b82f6; letter-spacing: 3px; margin: 15px 0; border: 2px dashed #334155; }
+        .school-info { color: #94a3b8; font-size: 14px; margin-top: 15px; }
+        .school-info p { margin: 5px 0; }
+        .copy-btn { background: #22c55e; margin-top: 15px; }
+        .copy-btn:hover { background: #16a34a; }
+        .logo { text-align: center; margin-bottom: 20px; }
+        .logo span { font-size: 48px; }
+        .instructions { background: rgba(59,130,246,0.1); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid rgba(59,130,246,0.3); }
+        .instructions p { color: #94a3b8; font-size: 13px; margin: 5px 0; }
+        .success { color: #22c55e; text-align: center; margin-top: 10px; font-size: 14px; }
+        .contact-box { margin-top: 30px; padding: 20px; background: rgba(220,38,38,0.1); border-radius: 8px; border: 1px solid rgba(220,38,38,0.3); }
+        .contact-box h4 { color: #ef4444; margin-bottom: 10px; }
+        .contact-box p { color: #94a3b8; font-size: 14px; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <span>🔑</span>
+        </div>
+        <h1>JD HUB License Generator</h1>
+        <p class="subtitle">Generate license keys for schools</p>
+        
+        <div class="instructions">
+            <p><strong>Instructions:</strong></p>
+            <p>1. Enter the school's machine ID (from their app)</p>
+            <p>2. Enter the school name</p>
+            <p>3. Click "Generate License" to create the key</p>
+        </div>
+        
+        <div class="form-group">
+            <label>School Machine ID</label>
+            <input type="text" id="machineId" placeholder="Enter machine ID (e.g., JD-A1B2-C3D4-E5F6-G7H8)">
+        </div>
+        
+        <div class="form-group">
+            <label>School Name</label>
+            <input type="text" id="schoolName" placeholder="Enter school name (e.g., St. Mary's Secondary School)">
+        </div>
+        
+        <div class="form-group">
+            <label>Contact Phone (Optional)</label>
+            <input type="tel" id="contactPhone" placeholder="Enter contact phone">
+        </div>
+        
+        <button class="btn" onclick="generateLicense()">Generate License Key</button>
+        
+        <div class="result" id="result">
+            <h3>✅ License Key Generated!</h3>
+            <div class="license-key" id="licenseKey">JD-XXXX-XXXX-XXXX-XXXX</div>
+            <p class="success" id="successMsg">License key copied to clipboard!</p>
+            <div class="school-info">
+                <p><strong>School:</strong> <span id="infoSchool"></span></p>
+                <p><strong>Machine ID:</strong> <span id="infoMachine"></span></p>
+                <p><strong>Generated:</strong> <span id="infoDate"></span></p>
+            </div>
+        </div>
+        
+        <div class="contact-box">
+            <h4>Need Help?</h4>
+            <p>Contact JD HUB for support:</p>
+            <p><strong>📞 Phone/WhatsApp: 0754687597</strong></p>
+            <p><strong>📧 Email: jdhubtech@gmail.com</strong></p>
+        </div>
+    </div>
+
+    <script>
+        function generateLicense() {
+            const machineId = document.getElementById('machineId').value.trim().toUpperCase();
+            const schoolName = document.getElementById('schoolName').value.trim();
+            const phone = document.getElementById('contactPhone').value.trim();
+            
+            if (!machineId || !schoolName) {
+                alert('Please enter both Machine ID and School Name');
+                return;
+            }
+            
+            // Validate machine ID format (should be like JD-XXXX-XXXX-XXXX-XXXX)
+            const validFormat = /^JD-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
+            if (!validFormat.test(machineId)) {
+                alert('Invalid Machine ID format. Expected: JD-XXXX-XXXX-XXXX-XXXX');
+                return;
+            }
+            
+            // Generate license key (same format as machine ID for demo)
+            const licenseKey = machineId;
+            
+            // Display result
+            document.getElementById('licenseKey').textContent = licenseKey;
+            document.getElementById('infoSchool').textContent = schoolName;
+            document.getElementById('infoMachine').textContent = machineId;
+            document.getElementById('infoDate').textContent = new Date().toLocaleString();
+            document.getElementById('result').style.display = 'block';
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(licenseKey).then(() => {
+                document.getElementById('successMsg').style.display = 'block';
+            }).catch(() => {
+                document.getElementById('successMsg').textContent = 'Select and copy the key above';
+                document.getElementById('successMsg').style.display = 'block';
+            });
+            
+            // Log the license (for JD Hub's records)
+            console.log('LICENSE GENERATED:', {
+                school: schoolName,
+                machineId: machineId,
+                licenseKey: licenseKey,
+                phone: phone,
+                date: new Date().toISOString()
+            });
+        }
+        
+        // Allow Enter key to submit
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') generateLicense();
+            });
+        });
+    </script>
+</body>
+</html>
