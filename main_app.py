@@ -111,7 +111,7 @@ class JDHubApp:
         
         tk.Label(top_bar, text="JD HUB School Management", font=("Arial", 16, "bold"), 
                  bg="#1e3a5f", fg="white").pack(side="left", padx=20)
-        tk.Label(top_bar, text=f"Welcome, {self.current_user["full_name"]}", font=("Arial", 12), 
+        tk.Label(top_bar, text="Welcome, " + self.current_user["full_name"], font=("Arial", 12), 
                  bg="#1e3a5f", fg="#93c5fd").pack(side="left", padx=20)
         tk.Button(top_bar, text="Logout", command=self.show_login_screen, bg="#dc2626", fg="white",
                   font=("Arial", 10, "bold"), cursor="hand2").pack(side="right", padx=20)
