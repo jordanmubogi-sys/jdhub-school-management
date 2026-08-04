@@ -102,7 +102,7 @@ class Theme:
                 primary=colors['primary'],
                 primary_container=colors['primary_light'],
                 surface=colors['card_bg'],
-                background=colors['background'],
+                surface_container_highest=colors.get('background', colors['card_bg']),
                 on_primary='white',
                 on_surface=colors['text_dark'],
             )
