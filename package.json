@@ -1,24 +1,29 @@
 {
-  "name": "jdhub-school-management",
+  "name": "jdhub-enterprise-sms",
   "version": "1.0.0",
-  "description": "JD HUB Enterprise School Management System",
+  "description": "JD HUB Enterprise School Management System - Complete Solution for Schools, Universities & Institutions",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder --win portable"
+    "build": "electron-builder --win portable --x64"
   },
   "build": {
-    "appId": "com.jdhub.schoolmanagement",
-    "productName": "JDHub School Management",
+    "appId": "com.jdhub.enterprise.sms",
+    "productName": "JD Hub Enterprise SMS",
+    "copyright": "Copyright 2024 JD Hub",
     "win": {
-      "target": "portable"
+      "target": [{
+        "target": "portable",
+        "arch": ["x64"]
+      }]
     },
     "directories": {
       "output": "dist"
     }
   },
   "dependencies": {
-    "electron-store": "^8.1.0"
+    "electron-store": "^8.1.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "electron": "^28.0.0",
