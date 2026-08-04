@@ -1,4 +1,4 @@
-name: Build Windows EXE
+name: Build JD Hub Desktop App
 
 on:
   push:
@@ -13,22 +13,22 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        python-version: '3.11'
+        node-version: '18'
     
     - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-        pip install pyinstaller
+      run: npm install
     
-    - name: Build EXE
-      run: |
-        pyinstaller --name=JDHubSchool --onefile --noconfirm --clean main_app.py
+    - name: Build Electron App
+      run: npm run build
+      env:
+        ELECTRON_CACHE: ${{ runner.temp }}/electron-cache
+        ELECTRON_BUILDER_CACHE: ${{ runner.temp }}/electron-builder-cache
     
     - name: Upload EXE
       uses: actions/upload-artifact@v4
       with:
-        name: JDHubSchool-EXE
-        path: dist/JDHubSchool.exe
+        name: JDHub-School-Management
+        path: dist/*.exe
