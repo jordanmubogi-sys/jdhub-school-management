@@ -12,8 +12,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      with:
-        lfs: true
     
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -25,11 +23,11 @@ jobs:
         pip install -r requirements.txt
         pip install pyinstaller
     
-    - name: Build EXE with PyInstaller
+    - name: Build EXE
       run: |
-        pyinstaller --name=JDHubSchool --onefile --noconfirm --clean --icon=app.ico main_app.py
+        pyinstaller --name=JDHubSchool --onefile --noconfirm --clean --hidden-import=tkinter --hidden-import=tkinter.ttk --hidden-import=tkinter.messagebox main_app.py
     
-    - name: Upload EXE as Artifact
+    - name: Upload EXE
       uses: actions/upload-artifact@v4
       with:
         name: JDHubSchool-EXE
