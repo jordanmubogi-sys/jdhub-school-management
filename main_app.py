@@ -175,7 +175,7 @@ class LoginView:
                         # JD Hub Branding
                         ft.Container(
                             content=ft.Column([
-                                ft.Icon(ft.icons.SCHOOL, size=60, color='#2563eb'),
+                                ft.Icon(ft.icons.SCHOOL_OUTLINED, size=60, color='#2563eb'),
                                 ft.Text("JD HUB", size=28, weight=ft.FontWeight.BOLD, 
                                        color='#0f172a'),
                                 ft.Text(BRAND['tagline'], size=14, color='#64748b'),
@@ -187,7 +187,7 @@ class LoginView:
                         ft.Container(
                             content=ft.Column([
                                 ft.Row([
-                                    ft.Icon(ft.icons.LOCK_OUTLINE, color='#ea580c', size=30),
+                                    ft.Icon(ft.icons.LOCK_OPEN, color='#ea580c', size=30),
                                     ft.Text("Activation Required", size=20, weight=ft.FontWeight.BOLD),
                                 ]),
                                 ft.Container(height=15),
@@ -222,11 +222,11 @@ class LoginView:
                                                    color='#0f172a'),
                                         ]),
                                         ft.Row([
-                                            ft.Icon(ft.icons.EMAIL, size=16, color='#2563eb'),
+                                            ft.Icon(ft.icons.EMAIL_OUTLINED, size=16, color='#2563eb'),
                                             ft.Text(BRAND['email'], size=14),
                                         ]),
                                         ft.Row([
-                                            ft.Icon(ft.icons.MESSAGE, size=16, color='#25d366'),
+                                            ft.Icon(ft.icons.MAIL_OUTLINE, size=16, color='#25d366'),
                                             ft.Text("WhatsApp: " + BRAND['whatsapp'], size=14),
                                         ]),
                                     ]),
@@ -289,7 +289,7 @@ class LoginView:
                         # JD Hub Branding
                         ft.Container(
                             content=ft.Column([
-                                ft.Icon(ft.icons.SCHOOL, size=70, color='#2563eb'),
+                                ft.Icon(ft.icons.SCHOOL_OUTLINED, size=70, color='#2563eb'),
                                 ft.Text("JD HUB", size=32, weight=ft.FontWeight.BOLD, 
                                        color='#0f172a'),
                                 ft.Text(BRAND['full_name'], size=14, color='#64748b'),
@@ -430,7 +430,7 @@ class LoginView:
                     ft.Text(BRAND['contact'], weight=ft.FontWeight.BOLD),
                 ]),
                 ft.Row([
-                    ft.Icon(ft.icons.MESSAGE, size=18, color='#25d366'),
+                    ft.Icon(ft.icons.MAIL_OUTLINE, size=18, color='#25d366'),
                     ft.Text(BRAND['whatsapp']),
                 ]),
             ]),
@@ -460,21 +460,21 @@ class MainDashboard:
         
         # Navigation items
         menu_items = [
-            _NavItem(ft.icons.DASHBOARD, "Dashboard", "dashboard", self._nav_to),
+            _NavItem(ft.icons.DASHBOARD_OUTLINED, "Dashboard", "dashboard", self._nav_to),
             _NavItem(ft.icons.PEOPLE, "Students", "students", self._nav_to),
             _NavItem(ft.icons.PERSON_ADD, "Registration", "registration", self._nav_to),
             _NavItem(ft.icons.BOOK, "Subjects", "subjects", self._nav_to),
-            _NavItem(ft.icons.GRADE, "Marks Entry", "marks", self._nav_to),
-            _NavItem(ft.icons.QUIZ, "Online Exams (CBT)", "exams", self._nav_to),
-            _NavItem(ft.icons.ANALYTICS, "Reports", "reports", self._nav_to),
-            _NavItem(ft.icons.ASSIGNMENT, "Report Cards", "report_cards", self._nav_to),
-            _NavItem(ft.icons.ATTACH_MONEY, "Fees", "fees", self._nav_to),
-            _NavItem(ft.icons.PAYMENT, "M-Pesa Payments", "mpesa", self._nav_to),
-            _NavItem(ft.icons.RECEIPT, "Payments", "payments", self._nav_to),
-            _NavItem(ft.icons.ADMIN_PANEL_SETTINGS, "Staff", "staff", self._nav_to),
-            _NavItem(ft.icons.LIBRARY_BOOKS, "Library", "library", self._nav_to),
+            _NavItem(ft.icons.GRADE_OUTLINED, "Marks Entry", "marks", self._nav_to),
+            _NavItem(ft.icons.QUIZ_OUTLINED, "Online Exams (CBT)", "exams", self._nav_to),
+            _NavItem(ft.icons.ANALYTICS_OUTLINED, "Reports", "reports", self._nav_to),
+            _NavItem(ft.icons.ASSIGNMENT_OUTLINED, "Report Cards", "report_cards", self._nav_to),
+            _NavItem(ft.icons.MONEY, "Fees", "fees", self._nav_to),
+            _NavItem(ft.icons.PAYMENT_OUTLINED, "M-Pesa Payments", "mpesa", self._nav_to),
+            _NavItem(ft.icons.RECEIPT_OUTLINED, "Payments", "payments", self._nav_to),
+            _NavItem(ft.icons.ADMIN_PANEL_SETTINGS_OUTLINED, "Staff", "staff", self._nav_to),
+            _NavItem(ft.icons.LIBRARY_BOOKS_OUTLINED, "Library", "library", self._nav_to),
             _NavItem(ft.icons.TRENDING_UP, "Analytics", "analytics", self._nav_to),
-            _NavItem(ft.icons.PSYCHOLOGY, "AI Predictions", "ai_predictions", self._nav_to),
+            _NavItem(ft.icons.PSYCHOLOGY_OUTLINED, "AI Predictions", "ai_predictions", self._nav_to),
             _NavItem(ft.icons.NOTIFICATIONS, "Notifications", "notifications", self._nav_to),
         ]
         
@@ -484,9 +484,9 @@ class MainDashboard:
                 ft.Container(height=10, bgcolor=theme['border']),
                 ft.Text("ADMIN", size=11, weight=ft.FontWeight.BOLD, 
                        color='#94a3b8', padding=ft.padding.only(left=15, top=10)),
-                _NavItem(ft.icons.VPN_KEY, "Licensing", "licensing", self._nav_to),
+                _NavItem(ft.icons.VPN_KEY_OUTLINED, "Licensing", "licensing", self._nav_to),
                 _NavItem(ft.icons.TOGGLE_ON, "Features", "features", self._nav_to),
-                _NavItem(ft.icons.MULTI_DOMAIN, "Multi-School", "multischool", self._nav_to),
+                _NavItem(ft.icons.DOMAIN, "Multi-School", "multischool", self._nav_to),
                 _NavItem(ft.icons.SETTINGS, "Settings", "settings", self._nav_to),
                 _NavItem(ft.icons.BACKUP, "Backups", "backups", self._nav_to),
             ])
@@ -494,7 +494,7 @@ class MainDashboard:
         menu_items.append(ft.Container(height=10))
         menu_items.append(ft.Container(
             content=ft.Row([
-                ft.Icon(ft.icons.PORTAL, size=20, color='#60a5fa'),
+                ft.Icon(ft.icons.HOME, size=20, color='#60a5fa'),
                 ft.Container(width=10),
                 ft.Text("Parent Portal", size=14, color='#e2e8f0'),
             ]),
@@ -508,7 +508,7 @@ class MainDashboard:
                 ft.Container(
                     content=ft.Row([
                         ft.Container(
-                            content=ft.Icon(ft.icons.SCHOOL, color='#3b82f6', size=35),
+                            content=ft.Icon(ft.icons.SCHOOL_OUTLINED, color='#3b82f6', size=35),
                         ),
                         ft.Column([
                             ft.Text("JD HUB", size=16, weight=ft.FontWeight.BOLD, 
@@ -609,7 +609,7 @@ class MainDashboard:
                              on_click=self._sync_data),
                 ft.IconButton(icon=ft.icons.NOTIFICATIONS, tooltip="Notifications",
                              on_click=self._show_notifications),
-                ft.IconButton(icon=ft.icons.HELP, tooltip="Help & Support",
+                ft.IconButton(icon=ft.icons.HELP_OUTLINE, tooltip="Help & Support",
                              on_click=self._show_help),
             ]),
             padding=15,
@@ -664,7 +664,7 @@ class MainDashboard:
         self.page.show_dialog(ft.AlertDialog(
             modal=True,
             title=ft.Row([
-                ft.Icon(ft.icons.HELP, color='#2563eb'),
+                ft.Icon(ft.icons.HELP_OUTLINE, color='#2563eb'),
                 ft.Text("JD Hub Support"),
             ]),
             content=ft.Column([
@@ -678,12 +678,12 @@ class MainDashboard:
                         ]),
                         ft.Container(height=5),
                         ft.Row([
-                            ft.Icon(ft.icons.MESSAGE, color='#25d366'),
+                            ft.Icon(ft.icons.MAIL_OUTLINE, color='#25d366'),
                             ft.Text("WhatsApp: " + BRAND['whatsapp'], size=14),
                         ]),
                         ft.Container(height=5),
                         ft.Row([
-                            ft.Icon(ft.icons.EMAIL, color='#2563eb'),
+                            ft.Icon(ft.icons.EMAIL_OUTLINED, color='#2563eb'),
                             ft.Text(BRAND['email'], size=14),
                         ]),
                     ]),
@@ -739,11 +739,11 @@ class MainDashboard:
         # Quick Actions
         quick_actions = [
             ("New Student", ft.icons.PERSON_ADD, '#16a34a', "registration"),
-            ("Enter Marks", ft.icons.GRADE, '#2563eb', "marks"),
-            ("Record Payment", ft.icons.PAYMENT, '#ea580c', "payments"),
-            ("Online Exam", ft.icons.QUIZ, '#8b5cf6', "exams"),
+            ("Enter Marks", ft.icons.GRADE_OUTLINED, '#2563eb', "marks"),
+            ("Record Payment", ft.icons.PAYMENT_OUTLINED, '#ea580c', "payments"),
+            ("Online Exam", ft.icons.QUIZ_OUTLINED, '#8b5cf6', "exams"),
             ("M-Pesa", ft.icons.PHONE, '#16a34a', "mpesa"),
-            ("Reports", ft.icons.ANALYTICS, '#2563eb', "reports"),
+            ("Reports", ft.icons.ANALYTICS_OUTLINED, '#2563eb', "reports"),
         ]
         
         action_buttons = []
@@ -849,7 +849,7 @@ class MainDashboard:
         stats.append({
             'label': 'Collections',
             'value': f"UGX {(collections['t'] or 0):,.0f}",
-            'icon': ft.icons.ATTACH_MONEY,
+            'icon': ft.icons.MONEY,
             'color': '#ea580c',
             'subtitle': 'This year'
         })
@@ -869,7 +869,7 @@ class MainDashboard:
         stats.append({
             'label': 'Active Exams',
             'value': exams['c'] if exams else 0,
-            'icon': ft.icons.QUIZ,
+            'icon': ft.icons.QUIZ_OUTLINED,
             'color': '#dc2626',
             'subtitle': 'Online tests'
         })
@@ -1034,7 +1034,7 @@ class MainDashboard:
                     content=ft.Column([
                         ft.Row([
                             ft.Container(
-                                content=ft.Icon(ft.icons.QUIZ, color='#8b5cf6'),
+                                content=ft.Icon(ft.icons.QUIZ_OUTLINED, color='#8b5cf6'),
                                 padding=10, bgcolor='#f3e8ff', border_radius=8,
                             ),
                             ft.Container(expand=True),
@@ -1072,7 +1072,7 @@ class MainDashboard:
             ft.Container(
                 content=ft.Column([
                     ft.Row([
-                        ft.Icon(ft.icons.PSYCHOLOGY, color='#8b5cf6', size=40),
+                        ft.Icon(ft.icons.PSYCHOLOGY_OUTLINED, color='#8b5cf6', size=40),
                         ft.Container(width=15),
                         ft.Column([
                             ft.Text("Computer-Based Testing System", size=18, weight=ft.FontWeight.BOLD),
@@ -1157,7 +1157,7 @@ class MainDashboard:
                 content=ft.Column([
                     ft.Row([
                         ft.Container(
-                            content=ft.Icon(ft.icons.PSYCHOLOGY, color='#8b5cf6', size=50),
+                            content=ft.Icon(ft.icons.PSYCHOLOGY_OUTLINED, color='#8b5cf6', size=50),
                         ),
                         ft.Container(width=15),
                         ft.Column([
@@ -1178,7 +1178,7 @@ class MainDashboard:
                             ),
                             ft.Container(height=10),
                             ft.ElevatedButton("Predict Performance", bgcolor='#8b5cf6',
-                                             icon=ft.icons.PSYCHOLOGY, on_click=self._predict_grade),
+                                             icon=ft.icons.PSYCHOLOGY_OUTLINED, on_click=self._predict_grade),
                         ]),
                     ),
                 ]),
@@ -1258,7 +1258,7 @@ class MainDashboard:
                         ft.Container(width=20),
                         ft.Container(
                             content=ft.Column([
-                                ft.Icon(ft.icons.MESSAGE, color='#25d366'),
+                                ft.Icon(ft.icons.MAIL_OUTLINE, color='#25d366'),
                                 ft.Text("WhatsApp", size=14, weight=ft.FontWeight.BOLD),
                                 ft.Text("Via WhatsApp Business", size=11, color='#64748b'),
                             ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
@@ -1388,7 +1388,7 @@ class MainDashboard:
                                 ft.Container(height=8),
                                 ft.Row([ft.Icon(ft.icons.VISIBILITY, size=18), ft.Text("View report cards", size=13)]),
                                 ft.Container(height=8),
-                                ft.Row([ft.Icon(ft.icons.ATTACH_MONEY, size=18), ft.Text("View fee balance", size=13)]),
+                                ft.Row([ft.Icon(ft.icons.MONEY, size=18), ft.Text("View fee balance", size=13)]),
                                 ft.Container(height=8),
                                 ft.Row([ft.Icon(ft.icons.EVENT_NOTE, size=18), ft.Text("View attendance", size=13)]),
                             ]),
@@ -1468,7 +1468,7 @@ class JDHubSMSApp:
         self.page.show_dialog(ft.AlertDialog(
             modal=True,
             title=ft.Row([
-                ft.Icon(ft.icons.VPN_KEY, color='#2563eb'),
+                ft.Icon(ft.icons.VPN_KEY_OUTLINED, color='#2563eb'),
                 ft.Text("License Activation"),
             ]),
             content=ft.Column([
@@ -1479,10 +1479,10 @@ class JDHubSMSApp:
                         ft.Row([ft.Icon(ft.icons.PHONE, color='#16a34a'),
                               ft.Text(BRAND['contact'], size=16, weight=ft.FontWeight.BOLD)]),
                         ft.Container(height=5),
-                        ft.Row([ft.Icon(ft.icons.MESSAGE, color='#25d366'),
+                        ft.Row([ft.Icon(ft.icons.MAIL_OUTLINE, color='#25d366'),
                               ft.Text("WhatsApp: " + BRAND['whatsapp'], size=14)]),
                         ft.Container(height=5),
-                        ft.Row([ft.Icon(ft.icons.EMAIL, color='#2563eb'),
+                        ft.Row([ft.Icon(ft.icons.EMAIL_OUTLINED, color='#2563eb'),
                               ft.Text(BRAND['email'], size=14)]),
                     ]),
                     padding=15, bgcolor='#f0fdf4', border_radius=10,
