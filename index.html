@@ -1,913 +1,731 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JD HUB Enterprise SMS</title>
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
-        body{background:#f8fafc;color:#0f172a;min-height:100vh}
-        
-        /* Activation */
-        .activation-screen,.login-screen,.main-app{display:none;min-height:100vh}
-        .activation-screen.active,.login-screen.active,.main-app.active{display:block}
-        .act-card{background:#fff;border-radius:16px;padding:40px;max-width:500px;margin:50px auto;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
-        .act-card h1{color:#2563eb;font-size:32px;margin-bottom:5px;text-align:center}
-        .act-card .sub{color:#64748b;text-align:center;margin-bottom:25px;font-size:14px}
-        .machine-id{background:#f1f5f9;padding:15px;border-radius:8px;text-align:center;font-family:monospace;font-size:16px;color:#2563eb;margin:15px 0;letter-spacing:2px;word-break:break-all}
-        .act-card input{width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:8px;font-size:15px;margin-bottom:12px}
-        .act-card input:focus{border-color:#2563eb;outline:none}
-        .act-card button{width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer}
-        .act-card button:hover{background:#1d4ed8}
-        .error{color:#dc2626;font-size:13px;text-align:center;display:none;margin-top:10px}
-        .contact-box{margin-top:25px;padding:20px;background:#f1f5f9;border-radius:8px;text-align:center}
-        .contact-box h4{color:#2563eb;margin-bottom:8px}
-        .contact-box p{color:#64748b;font-size:13px;margin:4px 0}
-        
-        /* Login */
-        .login-container{display:flex;min-height:100vh}
-        .login-left{flex:1;background:linear-gradient(135deg,#1e40af,#2563eb);padding:50px;display:flex;flex-direction:column;justify-content:center;color:#fff}
-        .login-left h1{font-size:48px;margin-bottom:15px}
-        .login-left p{font-size:18px;opacity:0.9;line-height:1.6}
-        .login-left .feat{margin-top:40px}
-        .login-left .feat-item{display:flex;align-items:center;margin:12px 0;font-size:16px}
-        .login-left .feat-item span{margin-right:12px;font-size:20px}
-        .login-right{flex:1;background:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:50px}
-        .login-right h2{font-size:32px;margin-bottom:30px;color:#0f172a}
-        .login-form{width:100%;max-width:380px}
-        .login-form label{display:block;color:#374151;font-size:14px;font-weight:500;margin-bottom:6px}
-        .login-form input{width:100%;padding:14px;border:2px solid #e5e7eb;border-radius:8px;font-size:15px;margin-bottom:18px}
-        .login-form input:focus{border-color:#2563eb;outline:none}
-        .login-form button{width:100%;padding:15px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer}
-        .login-form button:hover{background:#1d4ed8}
-        .demo-box{margin-top:25px;padding:18px;background:#eff6ff;border-radius:8px;border:1px solid #bfdbfe}
-        .demo-box h4{color:#2563eb;margin-bottom:8px;font-size:14px}
-        .demo-box p{color:#64748b;font-size:13px;margin:4px 0}
-        
-        /* Sidebar */
-        .sidebar{position:fixed;left:0;top:0;width:260px;height:100vh;background:#1e293b;padding:20px 0;overflow-y:auto}
-        .sidebar-header{padding:0 20px 20px;border-bottom:1px solid #334155;margin-bottom:20px}
-        .sidebar-header h1{color:#2563eb;font-size:24px}
-        .sidebar-header p{color:#64748b;font-size:12px;margin-top:4px}
-        .nav-item{padding:14px 20px;color:#94a3b8;cursor:pointer;display:flex;align-items:center;border-left:3px solid transparent;transition:all 0.2s}
-        .nav-item:hover{background:rgba(37,99,235,0.1);color:#fff}
-        .nav-item.active{background:rgba(37,99,235,0.2);color:#2563eb;border-left-color:#2563eb}
-        .nav-item .icon{width:28px;height:28px;margin-right:12px;display:flex;align-items:center;justify-content:center;background:#334155;border-radius:6px;font-size:13px;font-weight:600}
-        .nav-item.active .icon{background:#2563eb;color:#fff}
-        
-        /* Topbar */
-        .topbar{margin-left:260px;background:#fff;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:100}
-        .topbar h2{font-size:20px;color:#0f172a}
-        .topbar-info{display:flex;align-items:center;gap:15px}
-        .school-badge{background:#2563eb;color:#fff;padding:5px 12px;border-radius:20px;font-size:12px}
-        .user-info{color:#64748b;font-size:14px}
-        .logout-btn{padding:8px 16px;background:#dc2626;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px}
-        .logout-btn:hover{background:#b91c1c}
-        .portal-btn{padding:8px 16px;background:#22c55e;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px}
-        
-        /* Content */
-        .content{margin-left:260px;padding:30px;background:#f8fafc;min-height:calc(100vh - 60px)}
-        
-        /* Stats */
-        .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:30px}
-        .stat-card{background:#fff;padding:25px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
-        .stat-card .number{font-size:36px;font-weight:700;color:#0f172a}
-        .stat-card .label{color:#64748b;font-size:14px;margin-top:5px}
-        .stat-card.blue .number{color:#2563eb}
-        .stat-card.green .number{color:#22c55e}
-        .stat-card.purple .number{color:#a855f7}
-        .stat-card.orange .number{color:#f97316}
-        .stat-card.red .number{color:#dc2626}
-        
-        /* Modules Grid */
-        .module-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-bottom:30px}
-        .module-card{background:#fff;padding:25px;border-radius:12px;cursor:pointer;transition:all 0.3s;box-shadow:0 2px 10px rgba(0,0,0,0.05);border:1px solid #e2e8f0}
-        .module-card:hover{transform:translateY(-5px);border-color:#2563eb;box-shadow:0 10px 30px rgba(37,99,235,0.15)}
-        .module-card .icon{width:50px;height:50px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:15px}
-        .module-card h3{font-size:16px;color:#0f172a;margin-bottom:6px}
-        .module-card p{color:#64748b;font-size:13px}
-        
-        /* Data Sections */
-        .data-section{background:#fff;border-radius:12px;padding:25px;margin-bottom:25px;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
-        .data-section h3{font-size:18px;color:#0f172a;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
-        .add-btn{padding:8px 16px;background:#22c55e;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px}
-        .add-btn:hover{background:#16a34a}
-        .add-btn.blue{background:#2563eb}
-        .add-btn.blue:hover{background:#1d4ed8}
-        
-        /* Tables */
-        .data-table{width:100%;border-collapse:collapse}
-        .data-table th{text-align:left;padding:12px;color:#64748b;font-weight:500;font-size:13px;border-bottom:2px solid #e2e8f0}
-        .data-table td{padding:14px 12px;border-bottom:1px solid #f1f5f9;font-size:14px}
-        .data-table tr:hover{background:#f8fafc}
-        .badge{padding:4px 10px;border-radius:12px;font-size:12px;font-weight:500}
-        .badge.green{background:#dcfce7;color:#16a34a}
-        .badge.orange{background:#ffedd5;color:#ea580c}
-        .badge.blue{background:#dbeafe;color:#2563eb}
-        .badge.red{background:#fee2e2;color:#dc2626}
-        .badge.purple{background:#ede9fe;color:#7c3aed}
-        
-        /* Forms */
-        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px}
-        .form-group{margin-bottom:15px}
-        .form-group label{display:block;color:#374151;font-size:14px;font-weight:500;margin-bottom:6px}
-        .form-group input,.form-group select,.form-group textarea{width:100%;padding:12px;border:2px solid #e5e7eb;border-radius:8px;font-size:15px;background:#fff}
-        .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#2563eb;outline:none}
-        
-        /* Modal */
-        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:1000}
-        .modal.active{display:flex}
-        .modal-content{background:#fff;border-radius:16px;padding:30px;width:550px;max-width:95%;max-height:90vh;overflow-y:auto}
-        .modal-content h3{font-size:20px;color:#0f172a;margin-bottom:20px}
-        .modal-buttons{display:flex;gap:10px;margin-top:20px}
-        .modal-buttons button{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500}
-        .modal-buttons .save{background:#2563eb;color:#fff}
-        .modal-buttons .cancel{background:#e5e7eb;color:#374151}
-        
-        /* QR Code */
-        .qr-section{background:#fff;border-radius:12px;padding:25px;margin-bottom:25px;text-align:center}
-        .qr-section h3{font-size:18px;color:#0f172a;margin-bottom:15px}
-        .qr-box{background:#f1f5f9;padding:20px;border-radius:8px;display:inline-block}
-        .qr-url{font-family:monospace;font-size:14px;color:#2563eb;margin-top:10px;word-break:break-all}
-        
-        /* Animations */
-        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-        .fade-in{animation:fadeIn 0.4s ease-out}
-        
-        /* Responsive */
-        @media(max-width:768px){
-            .sidebar{width:60px}
-            .sidebar-header h1,.sidebar-header p,.nav-item span:last-child,.login-left{display:none}
-            .topbar,.content{margin-left:60px}
-            .login-container{flex-direction:column}
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JD HUB - Enterprise School Management</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0f172a;min-height:100vh;color:#334155}
+
+/* Login */
+.login-screen{display:flex;height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e3a8a 0%,#3b82f6 50%,#6366f1 100%)}
+.login-box{background:white;padding:50px;border-radius:20px;width:420px;text-align:center;box-shadow:0 25px 80px rgba(0,0,0,0.4)}
+.login-logo{font-size:5em;margin-bottom:20px}
+.login-title{font-size:2em;color:#1e293b;font-weight:bold}
+.login-subtitle{color:#64748b;margin-bottom:30px;font-size:0.95em}
+.login-input{width:100%;padding:16px 20px;margin-bottom:15px;border:2px solid #e2e8f0;border-radius:12px;font-size:1em;transition:all 0.3s}
+.login-input:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,0.1)}
+.login-btn{width:100%;padding:16px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;border:none;border-radius:12px;font-size:1.1em;font-weight:bold;cursor:pointer;margin-top:10px}
+.login-btn:hover{transform:scale(1.02)}
+.login-roles{margin-top:25px;padding-top:25px;border-top:1px solid #e2e8f0}
+.login-roles h4{color:#64748b;font-size:0.85em;margin-bottom:10px}
+.role-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.role-btn{padding:6px 12px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;font-size:0.75em;cursor:pointer}
+.role-btn:hover{background:#3b82f6;color:white}
+
+/* App Container */
+.app-container{display:none;height:100vh}
+.app-container.active{display:flex}
+
+/* Sidebar */
+.sidebar{width:80px;background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%);padding:20px 10px;display:flex;flex-direction:column;gap:5px}
+.sidebar-logo{text-align:center;font-size:2em;margin-bottom:20px;padding:10px}
+.sidebar-btn{width:60px;height:55px;border:none;border-radius:12px;background:transparent;color:#94a3b8;cursor:pointer;font-size:18px;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.sidebar-btn span{font-size:9px;font-weight:600}
+.sidebar-btn:hover{background:rgba(255,255,255,0.1);color:white}
+.sidebar-btn.active{background:linear-gradient(135deg,#3b82f6,#2563eb);color:white}
+.sidebar-bottom{margin-top:auto}
+.logout-btn{width:60px;height:55px;border:none;border-radius:12px;background:transparent;color:#94a3b8;cursor:pointer;font-size:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.logout-btn span{font-size:9px;font-weight:600}
+
+/* Main Content */
+.main-content{flex:1;display:flex;flex-direction:column;background:#f1f5f9;overflow:hidden}
+.top-bar{background:white;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;box-shadow:0 2px 4px rgba(0,0,0,0.05)}
+.top-bar h2{color:#1e293b;font-size:1.3em}
+.top-actions{display:flex;gap:15px;align-items:center}
+.top-btn{padding:8px 16px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;font-size:0.9em}
+.top-btn:hover{background:#e2e8f0}
+.user-menu{display:flex;align-items:center;gap:12px}
+.avatar{width:42px;height:42px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:1.1em}
+.user-info strong{display:block;color:#1e293b;font-size:0.95em}
+.user-info span{color:#64748b;font-size:0.8em}
+
+/* Page Content */
+.page-content{flex:1;padding:25px;overflow-y:auto}
+
+/* Stats Grid */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:25px}
+.stat-card{background:white;padding:25px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,0.05);display:flex;align-items:center;gap:20px}
+.stat-icon{width:60px;height:60px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:1.8em}
+.stat-icon.blue{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}
+.stat-icon.green{background:linear-gradient(135deg,#d1fae5,#a7f3d0)}
+.stat-icon.orange{background:linear-gradient(135deg,#fef3c7,#fde68a)}
+.stat-icon.purple{background:linear-gradient(135deg,#ede9fe,#ddd6fe)}
+.stat-icon.red{background:linear-gradient(135deg,#fee2e2,#fecaca)}
+.stat-icon.cyan{background:linear-gradient(135deg,#cffafe,#a5f3fc)}
+.stat-info h3{font-size:1.8em;color:#0f172a}
+.stat-info p{color:#64748b;font-size:0.9em;margin-top:2px}
+
+/* Data Card */
+.data-card{background:white;border-radius:16px;padding:25px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.card-header h3{color:#1e293b;font-size:1.1em}
+.btn{padding:10px 20px;border:none;border-radius:10px;cursor:pointer;font-weight:600;font-size:0.9em;transition:all 0.2s}
+.btn-primary{background:linear-gradient(135deg,#3b82f6,#2563eb);color:white}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(59,130,246,0.3)}
+.btn-secondary{background:#f1f5f9;color:#475569}
+.btn-success{background:#10b981;color:white}
+.btn-danger{background:#ef4444;color:white}
+.btn-sm{padding:6px 12px;font-size:0.85em}
+
+/* Table */
+.table-container{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:14px 16px;text-align:left;border-bottom:1px solid #f1f5f9}
+th{background:#f8fafc;color:#64748b;font-weight:600;font-size:0.85em;text-transform:uppercase}
+tr:hover{background:#f8fafc}
+.badge{padding:5px 12px;border-radius:20px;font-size:0.8em;font-weight:600;display:inline-block}
+.badge-success{background:#d1fae5;color:#059669}
+.badge-warning{background:#fef3c7;color:#d97706}
+.badge-danger{background:#fee2e2;color:#dc2626}
+.badge-info{background:#dbeafe;color:#2563eb}
+.action-btn{padding:6px 12px;background:#f1f5f9;border:none;border-radius:6px;cursor:pointer;font-size:0.85em}
+.action-btn:hover{background:#e2e8f0}
+
+/* Charts */
+.chart-grid{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+.chart-box{background:white;border-radius:16px;padding:25px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.chart-placeholder{height:250px;background:linear-gradient(135deg,#f8fafc,#e2e8f0);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:1.1em}
+
+/* Notification */
+.notification{position:fixed;top:20px;right:20px;background:#10b981;color:white;padding:15px 25px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.2);display:none;z-index:1000;font-weight:500}
+.notification.show{display:block;animation:slideIn 0.3s ease}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+
+/* Section */
+.section{display:none}
+.section.active{display:block}
+
+/* Search */
+.search-container{display:flex;gap:15px;margin-bottom:20px}
+.search-input{flex:1;padding:12px 20px;border:2px solid #e2e8f0;border-radius:12px;font-size:0.95em}
+
+/* Quick Actions */
+.quick-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px}
+.quick-action{background:#f8fafc;padding:20px;border-radius:12px;text-align:center;cursor:pointer;transition:all 0.2s;border:2px solid transparent}
+.quick-action:hover{background:white;border-color:#3b82f6;transform:translateY(-2px)}
+.quick-action-icon{font-size:2em;margin-bottom:10px}
+.quick-action span{font-weight:600;color:#475569;font-size:0.9em}
+
+/* Modal */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center}
+.modal.active{display:flex}
+.modal-content{background:white;padding:30px;border-radius:20px;width:500px;max-width:90%;max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.modal-header h3{color:#1e293b}
+.modal-close{width:35px;height:35px;border-radius:50%;background:#f1f5f9;border:none;cursor:pointer;font-size:1.2em}
+
+/* Form */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;margin-bottom:8px;color:#475569;font-weight:600;font-size:0.9em}
+.form-input{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:10px;font-size:0.95em;transition:all 0.2s}
+.form-input:focus{outline:none;border-color:#3b82f6}
+.form-select{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:10px;font-size:0.95em;background:white}
+
+/* Feature List */
+.feature-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.feature-item{display:flex;align-items:center;gap:10px;padding:12px 15px;background:#f8fafc;border-radius:10px}
+.feature-item .icon{font-size:1.2em}
+.feature-item .text{font-size:0.9em;color:#475569}
+
+/* QR Section */
+.qr-section{background:white;border-radius:16px;padding:30px;margin-bottom:20px;text-align:center}
+.qr-box{background:#f1f5f9;padding:20px;border-radius:12px;display:inline-block}
+.qr-url{font-family:monospace;font-size:14px;color:#2563eb;margin-top:10px;word-break:break-all}
+
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}.chart-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.stats-grid{grid-template-columns:1fr}.sidebar{width:60px}}
+</style>
 </head>
 <body>
-    <!-- Activation Screen -->
-    <div class="activation-screen active" id="activationScreen">
-        <div class="act-card">
-            <h1>JD HUB</h1>
-            <p class="sub">Enterprise School Management System</p>
-            <p style="color:#64748b;font-size:14px;margin-bottom:8px">Your Machine ID:</p>
-            <div class="machine-id" id="machineId">Loading...</div>
-            <p style="color:#64748b;font-size:14px;margin-bottom:8px">Enter your License Key:</p>
-            <input type="text" id="licenseKey" placeholder="JD-XXXX-XXXX-XXXX-XXXX">
-            <input type="text" id="schoolName" placeholder="School Name (e.g., St. Mary's Secondary School)">
-            <button onclick="activateLicense()">Activate System</button>
-            <p class="error" id="activationError">Invalid license key. Contact JD Hub.</p>
-            <div class="contact-box">
-                <h4>Contact JD HUB for Licensing</h4>
-                <p><strong>Phone/WhatsApp: 0754687597</strong></p>
-                <p><strong>Email: jdhubtech@gmail.com</strong></p>
-                <p style="margin-top:10px;font-size:12px">Demo Key: JD-DEMO-2024-ENTERPRISE</p>
+<div id="notification" class="notification">Success!</div>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+    <div class="login-box">
+        <div class="login-logo">🏫</div>
+        <h1 class="login-title">School Manager</h1>
+        <p class="login-subtitle">Enterprise School Management System</p>
+        <input type="text" id="username" class="login-input" placeholder="Username" value="Jordan">
+        <input type="password" id="password" class="login-input" placeholder="Password" value="admin123">
+        <button class="login-btn" onclick="login()">Sign In</button>
+        <div class="login-roles">
+            <h4>Select Role to Preview:</h4>
+            <div class="role-btns">
+                <button class="role-btn" onclick="document.getElementById('username').value='Jordan';document.getElementById('password').value='jordan123'">Super Admin</button>
+                <button class="role-btn" onclick="document.getElementById('username').value='headteacher';document.getElementById('password').value='pass123'">Head Teacher</button>
+                <button class="role-btn" onclick="document.getElementById('username').value='bursar';document.getElementById('password').value='pass123'">Bursar</button>
+                <button class="role-btn" onclick="document.getElementById('username').value='teacher1';document.getElementById('password').value='pass123'">Teacher</button>
+                <button class="role-btn" onclick="document.getElementById('username').value='dos';document.getElementById('password').value='pass123'">DOS</button>
+                <button class="role-btn" onclick="document.getElementById('username').value='secretary';document.getElementById('password').value='pass123'">Secretary</button>
             </div>
         </div>
     </div>
-    
-    <!-- Login Screen -->
-    <div class="login-screen" id="loginScreen">
-        <div class="login-container">
-            <div class="login-left">
-                <h1>JD HUB</h1>
-                <p>Enterprise School Management System<br>Complete solution for African schools</p>
-                <div class="feat">
-                    <div class="feat-item"><span>&#10003;</span> Student Information System</div>
-                    <div class="feat-item"><span>&#10003;</span> M-Pesa Payment Integration</div>
-                    <div class="feat-item"><span>&#10003;</span> Online CBT Examinations</div>
-                    <div class="feat-item"><span>&#10003;</span> AI Grade Predictions</div>
-                    <div class="feat-item"><span>&#10003;</span> Hardware Licensing</div>
-                    <div class="feat-item"><span>&#10003;</span> LAN Parent Portal</div>
-                </div>
-            </div>
-            <div class="login-right">
-                <h2>Sign In</h2>
-                <div class="login-form">
-                    <label>Username</label>
-                    <input type="text" id="loginUsername" placeholder="Enter username">
-                    <label>Password</label>
-                    <input type="password" id="loginPassword" placeholder="Enter password">
-                    <button onclick="login()">Sign In</button>
-                    <p class="error" id="loginError">Invalid username or password</p>
-                </div>
-                <div class="demo-box">
-                    <h4>Demo Credentials</h4>
-                    <p>Super Admin: jordan / jordan123</p>
-                    <p>Admin: admin / admin123</p>
-                    <p>Teacher: teacher1 / pass123</p>
-                    <p>Bursar: bursar / pass123</p>
-                    <p>Secretary: secretary / pass123</p>
-                </div>
-            </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app-container" id="mainApp">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-logo">🏫</div>
+        <button class="sidebar-btn active" onclick="showSection('dashboard',this)">📊<span>Dashboard</span></button>
+        <button class="sidebar-btn" onclick="showSection('students',this)">👨‍🎓<span>Students</span></button>
+        <button class="sidebar-btn" onclick="showSection('staff',this)">👨‍🏫<span>Staff</span></button>
+        <button class="sidebar-btn" onclick="showSection('academics',this)">📚<span>Academics</span></button>
+        <button class="sidebar-btn" onclick="showSection('exams',this)">📝<span>Exams</span></button>
+        <button class="sidebar-btn" onclick="showSection('fees',this)">💰<span>Fees</span></button>
+        <button class="sidebar-btn" onclick="showSection('attendance',this)">✅<span>Attendance</span></button>
+        <button class="sidebar-btn" onclick="showSection('reports',this)">📄<span>Reports</span></button>
+        <button class="sidebar-btn" onclick="showSection('library',this)">📖<span>Library</span></button>
+        <button class="sidebar-btn" onclick="showSection('transport',this)">🚌<span>Transport</span></button>
+        <button class="sidebar-btn" onclick="showSection('messages',this)">✉️<span>Messages</span></button>
+        <button class="sidebar-btn" onclick="showSection('disciplinary',this)">⚠️<span>Discipline</span></button>
+        <button class="sidebar-btn" onclick="showSection('medical',this)">🏥<span>Medical</span></button>
+        <button class="sidebar-btn" onclick="showSection('portal',this)">📱<span>Parent Portal</span></button>
+        <button class="sidebar-btn" onclick="showSection('settings',this)">⚙️<span>Settings</span></button>
+        <div class="sidebar-bottom">
+            <button class="logout-btn" onclick="logout()">🚪<span>Logout</span></button>
         </div>
     </div>
     
-    <!-- Main Application -->
-    <div class="main-app" id="mainApp">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h1>JD HUB</h1>
-                <p>Enterprise SMS v1.0</p>
-            </div>
-            <div class="nav-item active" onclick="showModule('dashboard')">
-                <div class="icon">D</div><span>Dashboard</span>
-            </div>
-            <div class="nav-item" onclick="showModule('students')">
-                <div class="icon">S</div><span>Students</span>
-            </div>
-            <div class="nav-item" onclick="showModule('registration')">
-                <div class="icon">R</div><span>Registration</span>
-            </div>
-            <div class="nav-item" onclick="showModule('marks')">
-                <div class="icon">M</div><span>Marks Entry</span>
-            </div>
-            <div class="nav-item" onclick="showModule('exams')">
-                <div class="icon">E</div><span>Online Exams</span>
-            </div>
-            <div class="nav-item" onclick="showModule('subjects')">
-                <div class="icon">B</div><span>Subjects</span>
-            </div>
-            <div class="nav-item" onclick="showModule('fees')">
-                <div class="icon">$</div><span>Fees & Payments</span>
-            </div>
-            <div class="nav-item" onclick="showModule('mpesa')">
-                <div class="icon">P</div><span>M-Pesa</span>
-            </div>
-            <div class="nav-item" onclick="showModule('staff')">
-                <div class="icon">T</div><span>Staff</span>
-            </div>
-            <div class="nav-item" onclick="showModule('reports')">
-                <div class="icon">R</div><span>Reports</span>
-            </div>
-            <div class="nav-item" onclick="showModule('library')">
-                <div class="icon">L</div><span>Library</span>
-            </div>
-            <div class="nav-item" onclick="showModule('attendance')">
-                <div class="icon">A</div><span>Attendance</span>
-            </div>
-            <div class="nav-item" onclick="showModule('disciplinary')">
-                <div class="icon">D</div><span>Disciplinary</span>
-            </div>
-            <div class="nav-item" onclick="showModule('medical')">
-                <div class="icon">M</div><span>Medical</span>
-            </div>
-            <div class="nav-item" onclick="showModule('ai')">
-                <div class="icon">AI</div><span>AI Predictions</span>
-            </div>
-            <div class="nav-item" onclick="showModule('portal')">
-                <div class="icon">Q</div><span>Parent Portal</span>
-            </div>
-            <div class="nav-item" onclick="showModule('settings')">
-                <div class="icon">G</div><span>Settings</span>
-            </div>
-            <div class="nav-item" onclick="showModule('audit')">
-                <div class="icon">Log</div><span>Audit Log</span>
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="top-bar">
+            <h2 id="pageTitle">📊 Dashboard</h2>
+            <div class="top-actions">
+                <button class="top-btn">🔔 5</button>
+                <button class="top-btn">✉️ 3</button>
+                <div class="user-menu">
+                    <div><strong id="userName">Jordan</strong><span id="userRole">Super Admin</span></div>
+                    <div class="avatar" id="userAvatar">J</div>
+                </div>
             </div>
         </div>
         
-        <!-- Topbar -->
-        <div class="topbar">
-            <h2 id="moduleTitle">Dashboard</h2>
-            <div class="topbar-info">
-                <span class="school-badge" id="schoolBadge">School</span>
-                <span class="user-info" id="userDisplay">User</span>
-                <button class="portal-btn" onclick="showModule('portal')">Parent Portal</button>
-                <button class="logout-btn" onclick="logout()">Logout</button>
-            </div>
-        </div>
-        
-        <!-- Content Area -->
-        <div class="content" id="contentArea">
-            <!-- Dashboard -->
-            <div id="dashboardModule" class="fade-in">
-                <div class="stats-row">
-                    <div class="stat-card blue"><div class="number" id="statStudents">0</div><div class="label">Total Students</div></div>
-                    <div class="stat-card green"><div class="number" id="statStaff">0</div><div class="label">Staff Members</div></div>
-                    <div class="stat-card purple"><div class="number" id="statRevenue">0</div><div class="label">Revenue (UGX)</div></div>
-                    <div class="stat-card orange"><div class="number" id="statClasses">0</div><div class="label">Classes</div></div>
+        <div class="page-content">
+            <!-- DASHBOARD -->
+            <div id="dashboard" class="section active">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon blue">👨‍🎓</div><div class="stat-info"><h3 id="totalStudents">1,247</h3><p>Total Students</p></div></div>
+                    <div class="stat-card"><div class="stat-icon green">👨‍🏫</div><div class="stat-info"><h3>89</h3><p>Staff Members</p></div></div>
+                    <div class="stat-card"><div class="stat-icon orange">💰</div><div class="stat-info"><h3 id="totalRevenue">$98,750</h3><p>Fee Collected</p></div></div>
+                    <div class="stat-card"><div class="stat-icon purple">📈</div><div class="stat-info"><h3>94%</h3><p>Attendance</p></div></div>
+                    <div class="stat-card"><div class="stat-icon cyan">📚</div><div class="stat-info"><h3>48</h3><p>Classes</p></div></div>
+                    <div class="stat-card"><div class="stat-icon red">⚠️</div><div class="stat-info"><h3>23</h3><p>Pending Fees</p></div></div>
                 </div>
-                <h3 style="margin-bottom:15px;color:#0f172a">Quick Actions</h3>
-                <div class="module-grid">
-                    <div class="module-card" onclick="showModule('registration')"><div class="icon" style="background:#dcfce7;color:#16a34a">+</div><h3>Register Student</h3><p>Add new students</p></div>
-                    <div class="module-card" onclick="showModule('marks')"><div class="icon" style="background:#dbeafe;color:#2563eb">M</div><h3>Enter Marks</h3><p>Record examination marks</p></div>
-                    <div class="module-card" onclick="showModule('fees')"><div class="icon" style="background:#ffedd5;color:#ea580c">$</div><h3>Record Payment</h3><p>Process school fees</p></div>
-                    <div class="module-card" onclick="showModule('exams')"><div class="icon" style="background:#ede9fe;color:#7c3aed">E</div><h3>Online Exam</h3><p>Conduct CBT tests</p></div>
-                    <div class="module-card" onclick="showModule('reports')"><div class="icon" style="background:#cffafe;color:#0891b2">R</div><h3>Report Cards</h3><p>Generate reports</p></div>
-                    <div class="module-card" onclick="showModule('ai')"><div class="icon" style="background:#fce7f3;color:#db2777">AI</div><h3>AI Predictions</h3><p>Predict performance</p></div>
+                <div class="chart-grid">
+                    <div class="chart-box"><h3 style="margin-bottom:15px">📊 Enrollment Trend</h3><div class="chart-placeholder">📈 Line chart showing enrollment over 12 months</div></div>
+                    <div class="chart-box"><h3 style="margin-bottom:15px">📚 Students by Class</h3><div class="chart-placeholder">🥧 Pie chart showing distribution</div></div>
                 </div>
-                <div class="data-section">
-                    <h3>Recent Announcements <button class="add-btn blue" onclick="showAddAnnouncement()">+ Add</button></h3>
-                    <div id="announcementsList"></div>
+                <div class="data-card">
+                    <div class="card-header"><h3>📋 Recent Activities</h3><button class="btn btn-secondary">View All</button></div>
+                    <table><thead><tr><th>Activity</th><th>User</th><th>Time</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td>New student admitted</td><td>Secretary</td><td>2 mins ago</td><td><span class="badge badge-success">Completed</span></td></tr>
+                        <tr><td>Fee payment received</td><td>Bursar</td><td>15 mins ago</td><td><span class="badge badge-success">Completed</span></td></tr>
+                        <tr><td>Exam results uploaded</td><td>Teacher</td><td>1 hour ago</td><td><span class="badge badge-success">Completed</span></td></tr>
+                        <tr><td>Attendance marked</td><td>Class Teacher</td><td>2 hours ago</td><td><span class="badge badge-warning">Pending</span></td></tr>
+                    </tbody></table>
                 </div>
-            </div>
-            
-            <!-- Students -->
-            <div id="studentsModule" class="fade-in" style="display:none">
-                <div class="data-section">
-                    <h3>Students Management <button class="add-btn" onclick="showAddStudentModal()">+ Add Student</button></h3>
-                    <table class="data-table">
-                        <thead><tr><th>ID</th><th>Admission No</th><th>Name</th><th>Class</th><th>Stream</th><th>Gender</th><th>Status</th><th>Actions</th></tr></thead>
-                        <tbody id="studentsTable"></tbody>
-                    </table>
+                <div class="data-card">
+                    <div class="card-header"><h3>⚡ Quick Actions</h3></div>
+                    <div class="quick-actions">
+                        <div class="quick-action" onclick="showSection('students',document.querySelectorAll('.sidebar-btn')[1])"><div class="quick-action-icon">👨‍🎓</div><span>Add Student</span></div>
+                        <div class="quick-action" onclick="showSection('staff',document.querySelectorAll('.sidebar-btn')[2])"><div class="quick-action-icon">👨‍🏫</div><span>Add Staff</span></div>
+                        <div class="quick-action" onclick="showSection('fees',document.querySelectorAll('.sidebar-btn')[5])"><div class="quick-action-icon">💰</div><span>Record Payment</span></div>
+                        <div class="quick-action" onclick="showSection('exams',document.querySelectorAll('.sidebar-btn')[4])"><div class="quick-action-icon">📝</div><span>Enter Marks</span></div>
+                        <div class="quick-action" onclick="showSection('reports',document.querySelectorAll('.sidebar-btn')[7])"><div class="quick-action-icon">📄</div><span>Generate Report</span></div>
+                        <div class="quick-action" onclick="showSection('messages',document.querySelectorAll('.sidebar-btn')[10])"><div class="quick-action-icon">✉️</div><span>Send Message</span></div>
+                    </div>
                 </div>
             </div>
             
-            <!-- Registration -->
-            <div id="registrationModule" class="fade-in" style="display:none">
-                <div class="data-section">
-                    <h3>Student Registration</h3>
+            <!-- STUDENTS -->
+            <div id="students" class="section">
+                <div class="data-card">
+                    <div class="card-header"><h3>👨‍🎓 Student Management</h3><button class="btn btn-primary" onclick="openModal('addStudent')">+ Add Student</button></div>
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="🔍 Search by name, admission number, or class...">
+                        <button class="btn btn-secondary">Filter</button>
+                        <button class="btn btn-secondary">Export</button>
+                    </div>
+                    <div class="table-container">
+                    <table><thead><tr><th>Adm No</th><th>Name</th><th>Class</th><th>Gender</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody id="studentsTableBody">
+                        <tr><td>SCH/2024/001</td><td><strong>Amina Wanjiku</strong><br><small>amina@email.com</small></td><td>Form 1 North</td><td>Female</td><td><span class="badge badge-success">Active</span></td><td><button class="action-btn">View</button><button class="action-btn">Edit</button></td></tr>
+                        <tr><td>SCH/2024/002</td><td><strong>John Kamau</strong><br><small>john@email.com</small></td><td>Form 2 South</td><td>Male</td><td><span class="badge badge-success">Active</span></td><td><button class="action-btn">View</button><button class="action-btn">Edit</button></td></tr>
+                        <tr><td>SCH/2024/003</td><td><strong>Faith Otieno</strong><br><small>faith@email.com</small></td><td>Form 3 East</td><td>Female</td><td><span class="badge badge-warning">Pending</span></td><td><button class="action-btn">View</button><button class="action-btn">Edit</button></td></tr>
+                    </tbody></table>
+                    </div>
+                </div>
+                <div class="data-card">
+                    <div class="card-header"><h3>📊 Student Statistics</h3></div>
+                    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
+                        <div class="stat-card" style="padding:15px"><h3 style="font-size:1.5em">647</h3><p>Boys</p></div>
+                        <div class="stat-card" style="padding:15px"><h3 style="font-size:1.5em">600</h3><p>Girls</p></div>
+                        <div class="stat-card" style="padding:15px"><h3 style="font-size:1.5em">42</h3><p>Boarding</p></div>
+                        <div class="stat-card" style="padding:15px"><h3 style="font-size:1.5em">1,205</h3><p>Day Scholars</p></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- STAFF -->
+            <div id="staff" class="section">
+                <div class="data-card">
+                    <div class="card-header"><h3>👨‍🏫 Staff Management</h3><button class="btn btn-primary" onclick="openModal('addStaff')">+ Add Staff</button></div>
+                    <div class="table-container">
+                    <table><thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody>
+                        <tr><td>STF/001</td><td><strong>Mrs. Sarah Kamau</strong></td><td>Head Teacher</td><td>0712345678</td><td><span class="badge badge-success">Active</span></td><td><button class="action-btn">View</button></td></tr>
+                        <tr><td>STF/002</td><td><strong>Mr. John Ochieng</strong></td><td>Class Teacher</td><td>0723456789</td><td><span class="badge badge-success">Active</span></td><td><button class="action-btn">View</button></td></tr>
+                        <tr><td>STF/003</td><td><strong>Mrs. Mary Wanjiku</strong></td><td>Bursar</td><td>0734567890</td><td><span class="badge badge-success">Active</span></td><td><button class="action-btn">View</button></td></tr>
+                    </tbody></table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ACADEMICS -->
+            <div id="academics" class="section">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon blue">📚</div><div class="stat-info"><h3>48</h3><p>Classes</p></div></div>
+                    <div class="stat-card"><div class="stat-icon green">📖</div><div class="stat-info"><h3>15</h3><p>Subjects</p></div></div>
+                    <div class="stat-card"><div class="stat-icon purple">🏫</div><div class="stat-info"><h3>4</h3><p>Streams</p></div></div>
+                    <div class="stat-card"><div class="stat-icon cyan">📅</div><div class="stat-info"><h3>Term 1</h3><p>Current Term</p></div></div>
+                </div>
+                <div class="data-card">
+                    <div class="card-header"><h3>📚 Class Management</h3><button class="btn btn-primary">+ Add Class</button></div>
+                    <div class="table-container">
+                    <table><thead><tr><th>Class</th><th>Stream</th><th>Class Teacher</th><th>Students</th><th>Capacity</th><th>Actions</th></tr></thead>
+                    <tbody>
+                        <tr><td>Form 1</td><td>North</td><td>Mr. John Ochieng</td><td>42</td><td>45</td><td><button class="action-btn">Manage</button></td></tr>
+                        <tr><td>Form 1</td><td>South</td><td>Mrs. Jane Doe</td><td>38</td><td>45</td><td><button class="action-btn">Manage</button></td></tr>
+                    </tbody></table>
+                    </div>
+                </div>
+                <div class="data-card">
+                    <div class="card-header"><h3>📖 Subject Management</h3><button class="btn btn-primary">+ Add Subject</button></div>
+                    <div class="table-container">
+                    <table><thead><tr><th>Code</th><th>Subject</th><th>Teachers</th><th>Classes</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td>MATH</td><td>Mathematics</td><td>5</td><td>All</td><td><span class="badge badge-success">Active</span></td></tr>
+                        <tr><td>ENG</td><td>English</td><td>4</td><td>All</td><td><span class="badge badge-success">Active</span></td></tr>
+                        <tr><td>SCI</td><td>Science</td><td>3</td><td>Forms 1-4</td><td><span class="badge badge-success">Active</span></td></tr>
+                    </tbody></table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- EXAMS -->
+            <div id="exams" class="section">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon blue">📝</div><div class="stat-info"><h3>12</h3><p>Exams This Year</p></div></div>
+                    <div class="stat-card"><div class="stat-icon green">✅</div><div class="stat-info"><h3>8</h3><p>Completed</p></div></div>
+                    <div class="stat-card"><div class="stat-icon orange">⏳</div><div class="stat-info"><h3>3</h3><p>In Progress</p></div></div>
+                    <div class="stat-card"><div class="stat-icon purple">📋</div><div class="stat-info"><h3>1</h3><p>Upcoming</p></div></div>
+                </div>
+                <div class="data-card">
+                    <div class="card-header"><h3>📝 Exam Management</h3><button class="btn btn-primary">+ Schedule Exam</button></div>
+                    <div class="table-container">
+                    <table><thead><tr><th>Exam Name</th><th>Term</th><th>Start Date</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody>
+                        <tr><td>Term 1 CAT 1</td><td>Term 1</td><td>2024-02-15</td><td><span class="badge badge-success">Completed</span></td><td><button class="action-btn">Results</button></td></tr>
+                        <tr><td>Term 1 CAT 2</td><td>Term 1</td><td>2024-03-10</td><td><span class="badge badge-success">Completed</span></td><td><button class="action-btn">Results</button></td></tr>
+                        <tr><td>Term 1 Mid-Term</td><td>Term 1</td><td>2024-04-01</td><td><span class="badge badge-warning">In Progress</span></td><td><button class="action-btn">Enter Marks</button></td></tr>
+                    </tbody></table>
+                    </div>
+                </div>
+                <div class="data-card">
+                    <div class="card-header"><h3>📊 Grade Boundaries</h3></div>
+                    <div class="table-container">
+                    <table><thead><tr><th>Grade</th><th>Min</th><th>Max</th><th>Points</th><th>Remarks</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="badge badge-success">A</span></td><td>80</td><td>100</td><td>12</td><td>Excellent</td></tr>
+                        <tr><td><span class="badge badge-success">A-</span></td><td>75</td><td>79</td><td>11</td><td>Very Good</td></tr>
+                        <tr><td><span class="badge badge-info">B+</span></td><td>70</td><td>74</td><td>10</td><td>Good</td></tr>
+                        <tr><td><span class="badge badge-info">B</span></td><td>65</td><td>69</td><td>9</td><td>Above Average</td></tr>
+                        <tr><td><span class="badge badge-warning">C+</span></td><td>60</td><td>64</td><td>8</td><td>Average</td></tr>
+                        <tr><td><span class="badge badge-danger">E</span></td><td>0</td><td>44</td><td>0</td><td>Fail</td></tr>
+                    </tbody></table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FEES -->
+            <div id="fees" class="section">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon blue">💵</div><div class="stat-info"><h3>$125,400</h3><p>Total Expected</p></div></div>
+                    <div class="stat-card"><div class="stat-icon green">✅</div><div class="stat-info"><h3>$98,750</h3><p>Collected (78.7%)</p></div></div>
+                    <div class="stat-card"><div class="stat-icon red">⚠️</div><div class="stat-info"><h3>$26,650</h3><p>Outstanding</p></div></div>
+                    <div class="stat-card"><div class="stat-icon orange">👥</div><div class="stat-info"><h3>1,224</h3><p>Fully Paid</p></div></div>
+                </div>
+                <div class="data-card">
+                    <div class="card-header"><h3>💰 Fee Collection</h3><button class="btn btn-success" onclick="openModal('recordPayment')">💵 Record Payment</button></div>
+                    <div class="table-container">
+                    <table><thead><tr><th>Receipt No</th><th>Student</th><th>Class</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td>RCP/2024/0001</td><td>Amina Wanjiku</td><td>Form 1 North</td><td>$450</td><td>2024-01-15</td><td><span class="badge badge-success">Paid</span></td></tr>
+                        <tr><td>RCP/2024/0002</td><td>John Kamau</td><td>Form 2 South</td><td>$380</td><td>2024-01-14</td><td><span class="badge badge-success">Paid</span></td></tr>
+                        <tr><td>RCP/2024/0003</td><td>Faith Otieno</td><td>Form 3 East</td><td>$200</td><td>2024-01-10</td><td><span class="badge badge-warning">Partial</span></td></tr>
+                    </tbody></table>
+                    </div>
+                </div>
+                <div class="data-card">
+                    <div class="card-header"><h3>📋 Fee Structure</h3><button class="btn btn-primary" onclick="openModal('addFee')">+ Add Fee Item</button></div>
+                    <div class="table-container">
+                    <table><thead><tr><th>Item</th><th>Amount</th><th>Frequency</th><th>Classes</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td>Tuition</td><td>$300</td><td>Per Term</td><td>All</td><td><span class="badge badge-success">Active</span></td></tr>
+                        <tr><td>Boarding</td><td>$150</td><td>Per Term</td><td>Forms 1-4</td><td><span class="badge badge-success">Active</span></td></tr>
+                        <tr><td>Activity Fee</td><td>$50</td><td>Per Term</td><td>All</td><td><span class="badge badge-success">Active</span></td></tr>
+                    </tbody></table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ATTENDANCE -->
+            <div id="attendance" class="section">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon green">✅</div><div class="stat-info"><h3>94%</h3><p>Overall Attendance</p></div></div>
+                    <div class="stat-card"><div class="stat-icon blue">👨‍🎓</div><div class="stat-info"><h3>1,172</h3><p>Present Today</p></div></div>
+                    <div class="stat-card"><div class="stat-icon orange">❌</div><div class="stat-info"><h3>75</h3><p>Absent Today</p></div></div>
+                    <div class="stat-card"><div class="stat-icon red">⚠️</div><div class="stat-info"><h3>12</h3><p>Late Arrivals</p></div></div>
+                </div>
+                <div class="data-card">
+                    <div class="card-header"><h3>✅ Today's Attendance</h3><button class="btn btn-primary">Mark Attendance</button></div>
+                    <div class="table-container">
+                    <table><thead><tr><th>Class</th><th>Present</th><th>Absent</th><th>Late</th><th>Attendance %</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td>Form 1 North</td><td>40</td><td>2</td><td>1</td><td>95.2%</td><td><span class="badge badge-success">Good</span></td></tr>
+                        <tr><td>Form 1 South</td><td>36</td><td>3</td><td>2</td><td>90.0%</td><td><span class="badge badge-warning">Fair</span></td></tr>
+                    </tbody></table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- REPORTS -->
+            <div id="reports" class="section">
+                <div class="data-card">
+                    <div class="card-header"><h3>📄 Generate Reports</h3></div>
+                    <div class="quick-actions">
+                        <div class="quick-action" onclick="showNotification('Generating Student Report Cards...')"><div class="quick-action-icon">📊</div><span>Report Cards</span></div>
+                        <div class="quick-action" onclick="showNotification('Generating Class List...')"><div class="quick-action-icon">👥</div><span>Class List</span></div>
+                        <div class="quick-action" onclick="showNotification('Generating Attendance Report...')"><div class="quick-action-icon">✅</div><span>Attendance</span></div>
+                        <div class="quick-action" onclick="showNotification('Generating Financial Report...')"><div class="quick-action-icon">💰</div><span>Financial</span></div>
+                        <div class="quick-action" onclick="showNotification('Generating Performance Analysis...')"><div class="quick-action-icon">📈</div><span>Analysis</span></div>
+                        <div class="quick-action" onclick="showNotification('Generating Ranking Summary...')"><div class="quick-action-icon">🏆</div><span>Ranking</span></div>
+                        <div class="quick-action" onclick="showNotification('Generating Subject Analysis...')"><div class="quick-action-icon">📚</div><span>Subject Analysis</span></div>
+                        <div class="quick-action" onclick="showNotification('Generating Student Profile...')"><div class="quick-action-icon">👤</div><span>Student Profile</span></div>
+                        <div class="quick-action" onclick="showNotification('Generating Staff Report...')"><div class="quick-action-icon">👨‍🏫</div><span>Staff Report</span></div>
+                        <div class="quick-action" onclick="showNotification('Generating Medical Report...')"><div class="quick-action-icon">🏥</div><span>Medical</span></div>
+                        <div class="quick-action" onclick="showNotification('Generating Transfer Certificate...')"><div class="quick-action-icon">📜</div><span>Transfer Cert</span></div>
+                        <div class="quick-action" onclick="showNotification('Generating Character Report...')"><div class="quick-action-icon">⭐</div><span>Character Report</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- LIBRARY -->
+            <div id="library" class="section">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon blue">📚</div><div class="stat-info"><h3>5,420</h3><p>Total Books</p></div></div>
+                    <div class="stat-card"><div class="stat-icon green">📖</div><div class="stat-info"><h3>4,850</h3><p>Available</p></div></div>
+                    <div class="stat-card"><div class="stat-icon orange">📤</div><div class="stat-info"><h3>570</h3><p>Borrowed</p></div></div>
+                    <div class="stat-card"><div class="stat-icon red">⚠️</div><div class="stat-info"><h3>23</h3><p>Overdue</p></div></div>
+                </div>
+                <div class="data-card">
+                    <div class="card-header"><h3>📖 Book Catalog</h3><button class="btn btn-primary">+ Add Book</button></div>
+                    <div class="table-container">
+                    <table><thead><tr><th>ISBN</th><th>Title</th><th>Author</th><th>Category</th><th>Available</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td>978-0-06</td><td>To Kill a Mockingbird</td><td>Harper Lee</td><td>Fiction</td><td>3/5</td><td><span class="badge badge-success">Available</span></td></tr>
+                        <tr><td>978-0-14</td><td>1984</td><td>George Orwell</td><td>Fiction</td><td>0/4</td><td><span class="badge badge-warning">Borrowed</span></td></tr>
+                    </tbody></table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TRANSPORT -->
+            <div id="transport" class="section">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon blue">🚌</div><div class="stat-info"><h3>8</h3><p>Vehicles</p></div></div>
+                    <div class="stat-card"><div class="stat-icon green">🛣️</div><div class="stat-info"><h3>12</h3><p>Routes</p></div></div>
+                    <div class="stat-card"><div class="stat-icon orange">👨‍🎓</div><div class="stat-info"><h3>245</h3><p>Bus Students</p></div></div>
+                    <div class="stat-card"><div class="stat-icon purple">👨‍✈️</div><div class="stat-info"><h3>8</h3><p>Drivers</p></div></div>
+                </div>
+                <div class="data-card">
+                    <div class="card-header"><h3>🚌 Vehicle Management</h3><button class="btn btn-primary">+ Add Vehicle</button></div>
+                    <div class="table-container">
+                    <table><thead><tr><th>Plate No</th><th>Vehicle</th><th>Route</th><th>Capacity</th><th>Driver</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td>KABC 123A</td><td>Toyota Hiace</td><td>Route 1 - Westlands</td><td>25</td><td>James Kimani</td><td><span class="badge badge-success">Active</span></td></tr>
+                        <tr><td>KDEF 456B</td><td>Nissan Urvan</td><td>Route 2 - Karen</td><td>25</td><td>Peter Otieno</td><td><span class="badge badge-success">Active</span></td></tr>
+                    </tbody></table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- MESSAGES -->
+            <div id="messages" class="section">
+                <div class="data-card">
+                    <div class="card-header"><h3>✉️ Send Message</h3></div>
                     <div class="form-grid">
-                        <div class="form-group"><label>First Name</label><input type="text" id="regFirstName" placeholder="First name"></div>
-                        <div class="form-group"><label>Last Name</label><input type="text" id="regLastName" placeholder="Last name"></div>
-                        <div class="form-group"><label>Date of Birth</label><input type="date" id="regDob"></div>
-                        <div class="form-group"><label>Gender</label><select id="regGender"><option value="">Select</option><option>Male</option><option>Female</option></select></div>
-                        <div class="form-group"><label>Class</label><select id="regClass"><option value="">Select</option><option>S.1</option><option>S.2</option><option>S.3</option><option>S.4</option><option>S.5</option><option>S.6</option></select></div>
-                        <div class="form-group"><label>Stream</label><select id="regStream"><option value="">Select</option><option>Science</option><option>Arts</option><option>Commerce</option><option>Technical</option></select></div>
-                        <div class="form-group"><label>Parent Name</label><input type="text" id="regParent" placeholder="Parent/Guardian name"></div>
-                        <div class="form-group"><label>Parent Phone</label><input type="tel" id="regPhone" placeholder="07XXXXXXXX"></div>
+                        <div class="form-group">
+                            <label>Recipient Group</label>
+                            <select class="form-select"><option>All Parents</option><option>All Staff</option><option>All Students</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <input type="text" class="form-input" placeholder="Enter subject...">
+                        </div>
                     </div>
-                    <button class="add-btn" onclick="registerStudent()">Register Student</button>
-                </div>
-            </div>
-            
-            <!-- Marks -->
-            <div id="marksModule" class="fade-in" style="display:none">
-                <div class="data-section">
-                    <h3>Marks Entry</h3>
-                    <div class="form-grid" style="grid-template-columns:repeat(4,1fr)">
-                        <div class="form-group"><label>Class</label><select id="marksClass"><option>S.4</option><option>S.3</option><option>S.2</option></select></div>
-                        <div class="form-group"><label>Subject</label><select id="marksSubject"><option>Mathematics</option><option>English</option><option>Physics</option><option>Chemistry</option></select></div>
-                        <div class="form-group"><label>Exam Type</label><select id="marksExam"><option>End of Term</option><option>Mid Term</option><option>CAT 1</option><option>CAT 2</option></select></div>
-                        <div class="form-group"><label>Term/Year</label><select id="marksTerm"><option>Term 1 - 2024</option><option>Term 2 - 2024</option></select></div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea class="form-input" rows="5" placeholder="Type your message..."></textarea>
                     </div>
-                    <table class="data-table">
-                        <thead><tr><th>Adm No</th><th>Student Name</th><th>CAT 1 (20)</th><th>CAT 2 (20)</th><th>Exam (60)</th><th>Total</th><th>Grade</th><th>Action</th></tr></thead>
-                        <tbody id="marksTable"></tbody>
-                    </table>
+                    <button class="btn btn-primary" onclick="showNotification('Message sent successfully!')">Send Message</button>
                 </div>
             </div>
             
-            <!-- Exams -->
-            <div id="examsModule" class="fade-in" style="display:none">
-                <div class="module-grid">
-                    <div class="module-card"><div class="icon" style="background:#dcfce7;color:#16a34a">+</div><h3>Create Exam</h3><p>Set up new CBT exam</p></div>
-                    <div class="module-card"><div class="icon" style="background:#dbeafe;color:#2563eb">E</div><h3>Active Exams</h3><p>Manage ongoing exams</p></div>
-                    <div class="module-card"><div class="icon" style="background:#ede9fe;color:#7c3aed">R</div><h3>Exam Results</h3><p>View & analyze results</p></div>
-                </div>
-            </div>
-            
-            <!-- Subjects -->
-            <div id="subjectsModule" class="fade-in" style="display:none">
-                <div class="data-section">
-                    <h3>Subjects Management <button class="add-btn">+ Add Subject</button></h3>
-                    <table class="data-table">
-                        <thead><tr><th>Code</th><th>Subject Name</th><th>Teacher</th><th>Classes</th><th>Actions</th></tr></thead>
-                        <tbody id="subjectsTable"></tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- Fees -->
-            <div id="feesModule" class="fade-in" style="display:none">
-                <div class="data-section">
-                    <h3>Fees Structure <button class="add-btn">+ Add Fee</button></h3>
-                    <table class="data-table">
-                        <thead><tr><th>Class</th><th>Amount (UGX)</th><th>Description</th><th>Term</th><th>Actions</th></tr></thead>
-                        <tbody id="feesTable"></tbody>
-                    </table>
-                </div>
-                <div class="data-section">
-                    <h3>Recent Payments</h3>
-                    <table class="data-table">
-                        <thead><tr><th>Date</th><th>Student</th><th>Amount</th><th>Method</th><th>Reference</th><th>Term</th></tr></thead>
-                        <tbody id="paymentsTable"></tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- M-Pesa -->
-            <div id="mpesaModule" class="fade-in" style="display:none">
-                <div class="data-section">
-                    <h3>M-Pesa Payment Recording</h3>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Student ID</label><input type="text" placeholder="Enter student ID"></div>
-                        <div class="form-group"><label>Phone Number</label><input type="tel" placeholder="07XXXXXXXX"></div>
-                        <div class="form-group"><label>Amount (UGX)</label><input type="number" placeholder="Enter amount"></div>
-                        <div class="form-group"><label>Transaction ID</label><input type="text" placeholder="M-Pesa confirmation code"></div>
-                    </div>
-                    <button class="add-btn">Process Payment</button>
-                </div>
-            </div>
-            
-            <!-- Staff -->
-            <div id="staffModule" class="fade-in" style="display:none">
-                <div class="data-section">
-                    <h3>Staff Management <button class="add-btn">+ Add Staff</button></h3>
-                    <table class="data-table">
-                        <thead><tr><th>Staff No</th><th>Name</th><th>Role</th><th>Subjects</th><th>Classes</th><th>Contact</th><th>Status</th></tr></thead>
-                        <tbody id="staffTable"></tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- Reports -->
-            <div id="reportsModule" class="fade-in" style="display:none">
-                <div class="module-grid">
-                    <div class="module-card"><div class="icon" style="background:#dbeafe;color:#2563eb">R</div><h3>Report Cards</h3><p>Generate student report cards</p></div>
-                    <div class="module-card"><div class="icon" style="background:#dcfce7;color:#16a34a">A</div><h3>Analytics</h3><p>Performance analysis charts</p></div>
-                    <div class="module-card"><div class="icon" style="background:#ffedd5;color:#ea580c">F</div><h3>Financial Report</h3><p>Revenue and expenses</p></div>
-                    <div class="module-card"><div class="icon" style="background:#cffafe;color:#0891b2">B</div><h3>Broadsheet</h3><p>Export class broadsheets</p></div>
-                    <div class="module-card"><div class="icon" style="background:#fce7f3;color:#db2777">I</div><h3>ID Cards</h3><p>Generate student ID cards</p></div>
-                    <div class="module-card"><div class="icon" style="background:#ede9fe;color:#7c3aed">L</div><h3>Leaderboard</h3><p>Top performing students</p></div>
-                </div>
-            </div>
-            
-            <!-- Library -->
-            <div id="libraryModule" class="fade-in" style="display:none">
-                <div class="data-section">
-                    <h3>Library Management <button class="add-btn">+ Add Book</button></h3>
-                    <table class="data-table">
-                        <thead><tr><th>ISBN</th><th>Title</th><th>Author</th><th>Category</th><th>Copies</th><th>Available</th></tr></thead>
-                        <tbody id="libraryTable"></tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- Attendance -->
-            <div id="attendanceModule" class="fade-in" style="display:none">
-                <div class="data-section">
-                    <h3>Attendance Management</h3>
-                    <div class="form-grid" style="grid-template-columns:repeat(3,1fr)">
-                        <div class="form-group"><label>Date</label><input type="date"></div>
-                        <div class="form-group"><label>Class</label><select><option>S.4</option></select></div>
-                        <div class="form-group"><label>Session</label><select><option>Morning</option><option>Afternoon</option></select></div>
-                    </div>
-                    <button class="add-btn">Mark Attendance</button>
-                </div>
-            </div>
-            
-            <!-- Disciplinary -->
-            <div id="disciplinaryModule" class="fade-in" style="display:none">
-                <div class="data-section">
-                    <h3>Disciplinary Records <button class="add-btn">+ Add Record</button></h3>
-                    <p style="color:#64748b">Track student behavior and disciplinary incidents.</p>
-                </div>
-            </div>
-            
-            <!-- Medical -->
-            <div id="medicalModule" class="fade-in" style="display:none">
-                <div class="data-section">
-                    <h3>Medical Records <button class="add-btn">+ Add Record</button></h3>
-                    <p style="color:#64748b">Manage student health records and medical conditions.</p>
-                </div>
-            </div>
-            
-            <!-- AI -->
-            <div id="aiModule" class="fade-in" style="display:none">
-                <div class="data-section">
-                    <h3>AI Grade Predictions</h3>
-                    <p style="color:#64748b;margin-bottom:20px">Machine learning-based predictions for student performance.</p>
-                    <div class="module-grid">
-                        <div class="module-card" style="border-color:#f472b6"><div class="icon" style="background:#fce7f3;color:#db2777">P</div><h3>Predict Grades</h3><p>Based on current performance</p></div>
-                        <div class="module-card" style="border-color:#f472b6"><div class="icon" style="background:#fce7f3;color:#db2777">!</div><h3>At-Risk Students</h3><p>Identify students needing support</p></div>
-                        <div class="module-card" style="border-color:#f472b6"><div class="icon" style="background:#fce7f3;color:#db2777">T</div><h3>Trends</h3><p>Analyze performance over time</p></div>
+            <!-- DISCIPLINARY -->
+            <div id="disciplinary" class="section">
+                <div class="data-card">
+                    <div class="card-header"><h3>⚠️ Disciplinary Records</h3><button class="btn btn-primary">+ Add Record</button></div>
+                    <div class="table-container">
+                    <table><thead><tr><th>Student</th><th>Incident</th><th>Date</th><th>Action Taken</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td>John Kamau</td><td>Late coming (3rd time)</td><td>2024-01-15</td><td>Warning Letter</td><td><span class="badge badge-warning">Pending</span></td></tr>
+                    </tbody></table>
                     </div>
                 </div>
             </div>
             
-            <!-- Parent Portal -->
-            <div id="portalModule" class="fade-in" style="display:none">
+            <!-- MEDICAL -->
+            <div id="medical" class="section">
+                <div class="data-card">
+                    <div class="card-header"><h3>🏥 Medical Records</h3><button class="btn btn-primary">+ Add Record</button></div>
+                    <div class="table-container">
+                    <table><thead><tr><th>Student</th><th>Condition</th><th>Reported Date</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr><td>Amina Wanjiku</td><td>Asthma</td><td>2024-01-10</td><td><span class="badge badge-info">On Medication</span></td></tr>
+                    </tbody></table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PARENT PORTAL -->
+            <div id="portal" class="section">
                 <div class="qr-section">
-                    <h3>Parent Portal QR Code</h3>
+                    <h3>📱 Parent Portal QR Code</h3>
                     <div class="qr-box">
-                        <p style="font-size:80px;margin:0">&#9633;</p>
-                        <p class="qr-url" id="portalUrl">http://192.168.1.100:8080</p>
+                        <p style="font-size:100px;margin:0">📱</p>
+                        <p class="qr-url" id="portalUrlDisplay">http://192.168.1.100:8080</p>
                     </div>
                     <p style="color:#64748b;margin-top:15px;font-size:14px">Parents scan this QR code on school Wi-Fi to access the portal</p>
                     <p style="color:#64748b;font-size:13px">Login: Use student's Admission No. and Parent's Phone as password</p>
                 </div>
-            </div>
-            
-            <!-- Settings -->
-            <div id="settingsModule" class="fade-in" style="display:none">
-                <div class="data-section">
-                    <h3>School Settings</h3>
-                    <div class="form-grid">
-                        <div class="form-group"><label>School Name</label><input type="text" id="setSchoolName" placeholder="School name"></div>
-                        <div class="form-group"><label>Address</label><input type="text" id="setAddress" placeholder="Address"></div>
-                        <div class="form-group"><label>Phone</label><input type="tel" id="setPhone" placeholder="Phone"></div>
-                        <div class="form-group"><label>Email</label><input type="email" id="setEmail" placeholder="Email"></div>
-                    </div>
-                    <h4 style="margin:20px 0 15px;color:#0f172a">Academic Settings</h4>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Current Term</label><select id="setTerm"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></div>
-                        <div class="form-group"><label>Current Year</label><select id="setYear"><option>2024</option><option>2023</option></select></div>
-                        <div class="form-group"><label>Grading Scheme</label><select id="setGrading"><option>Standard UACE</option><option>PLE</option><option>Custom</option></select></div>
-                    </div>
-                    <button class="add-btn blue" onclick="saveSettings()">Save Settings</button>
-                </div>
-                <div class="data-section" style="margin-top:20px">
-                    <h3>Feature Toggles (Super Admin)</h3>
-                    <label style="display:flex;align-items:center;margin:10px 0;cursor:pointer"><input type="checkbox" style="width:auto;margin-right:10px"> Photo Processing & ID Cards</label>
-                    <label style="display:flex;align-items:center;margin:10px 0;cursor:pointer"><input type="checkbox" style="width:auto;margin-right:10px"> Custom PDF Branding</label>
-                    <label style="display:flex;align-items:center;margin:10px 0;cursor:pointer"><input type="checkbox" style="width:auto;margin-right:10px"> Email Fee Letters</label>
-                    <label style="display:flex;align-items:center;margin:10px 0;cursor:pointer"><input type="checkbox" style="width:auto;margin-right:10px"> Cloud Backup</label>
-                </div>
-                <div class="data-section" style="margin-top:20px">
-                    <h3>Database Management</h3>
-                    <div style="display:flex;gap:10px;flex-wrap:wrap">
-                        <button class="add-btn blue" onclick="exportDatabase()">Export Database</button>
-                        <button class="add-btn" onclick="importDatabase()">Import Database</button>
-                        <button class="add-btn" style="background:#f97316" onclick="backupUSB()">Backup to USB</button>
-                    </div>
+                <div class="data-card">
+                    <div class="card-header"><h3>📱 Portal Settings</h3></div>
+                    <label style="display:flex;align-items:center;margin:10px 0;cursor:pointer"><input type="checkbox" style="width:auto;margin-right:10px"> Enable Parent Portal Access</label>
+                    <label style="display:flex;align-items:center;margin:10px 0;cursor:pointer"><input type="checkbox" style="width:auto;margin-right:10px"> Show Fee Balance</label>
+                    <label style="display:flex;align-items:center;margin:10px 0;cursor:pointer"><input type="checkbox" style="width:auto;margin-right:10px"> Show Attendance</label>
+                    <label style="display:flex;align-items:center;margin:10px 0;cursor:pointer"><input type="checkbox" style="width:auto;margin-right:10px"> Show Report Cards</label>
                 </div>
             </div>
             
-            <!-- Audit Log -->
-            <div id="auditModule" class="fade-in" style="display:none">
-                <div class="data-section">
-                    <h3>System Audit Log</h3>
-                    <table class="data-table">
-                        <thead><tr><th>Timestamp</th><th>Action</th><th>User</th><th>Details</th></tr></thead>
-                        <tbody id="auditTable"></tbody>
-                    </table>
+            <!-- SETTINGS -->
+            <div id="settings" class="section">
+                <div class="data-card">
+                    <div class="card-header"><h3>🏫 School Information</h3><button class="btn btn-primary">Save Changes</button></div>
+                    <div class="form-grid">
+                        <div class="form-group"><label>School Name</label><input type="text" class="form-input" id="schoolNameInput" value="Demo Academy"></div>
+                        <div class="form-group"><label>Phone</label><input type="text" class="form-input" value="0712345678"></div>
+                        <div class="form-group"><label>Email</label><input type="email" class="form-input" value="info@demo.edu"></div>
+                        <div class="form-group"><label>Address</label><input type="text" class="form-input" value="123 Education Lane"></div>
+                        <div class="form-group"><label>Motto</label><input type="text" class="form-input" value="Education for Excellence"></div>
+                        <div class="form-group"><label>Vision</label><input type="text" class="form-input" value="To be a center of academic excellence"></div>
+                    </div>
+                </div>
+                <div class="data-card">
+                    <div class="card-header"><h3>🔐 License Information</h3></div>
+                    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
+                        <div class="stat-card" style="padding:15px"><h4 style="color:#64748b;font-size:0.8em">Plan</h4><h3 style="color:#10b981">🥇 Gold</h3></div>
+                        <div class="stat-card" style="padding:15px"><h4 style="color:#64748b;font-size:0.8em">Machine ID</h4><h3 style="font-size:1em" id="machineIdDisplay">242AE082B4274647</h3></div>
+                        <div class="stat-card" style="padding:15px"><h4 style="color:#64748b;font-size:0.8em">Expires</h4><h3 style="color:#2563eb">Dec 2025</h3></div>
+                        <div class="stat-card" style="padding:15px"><h4 style="color:#64748b;font-size:0.8em">Status</h4><h3 style="color:#10b981">✅ Active</h3></div>
+                    </div>
+                </div>
+                <div class="data-card">
+                    <div class="card-header"><h3>✅ Enabled Features</h3></div>
+                    <div class="feature-list">
+                        <div class="feature-item"><span class="icon">✅</span><span class="text">Student Management</span></div>
+                        <div class="feature-item"><span class="icon">✅</span><span class="text">Staff Management</span></div>
+                        <div class="feature-item"><span class="icon">✅</span><span class="text">Fee Management</span></div>
+                        <div class="feature-item"><span class="icon">✅</span><span class="text">Exam Management</span></div>
+                        <div class="feature-item"><span class="icon">✅</span><span class="text">Report Cards</span></div>
+                        <div class="feature-item"><span class="icon">✅</span><span class="text">Attendance</span></div>
+                        <div class="feature-item"><span class="icon">✅</span><span class="text">Library</span></div>
+                        <div class="feature-item"><span class="icon">✅</span><span class="text">Transport</span></div>
+                        <div class="feature-item"><span class="icon">✅</span><span class="text">Parent Portal</span></div>
+                        <div class="feature-item"><span class="icon">✅</span><span class="text">Cloud Backup</span></div>
+                        <div class="feature-item"><span class="icon">❌</span><span class="text">SMS Integration</span></div>
+                        <div class="feature-item"><span class="icon">❌</span><span class="text">API Access</span></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Add Student Modal -->
-    <div class="modal" id="addStudentModal">
-        <div class="modal-content">
-            <h3>Add New Student</h3>
-            <div class="form-group"><label>First Name</label><input type="text" id="newFirstName" placeholder="First name"></div>
-            <div class="form-group"><label>Last Name</label><input type="text" id="newLastName" placeholder="Last name"></div>
-            <div class="form-grid">
-                <div class="form-group"><label>Class</label><select id="newClass"><option>S.1</option><option>S.2</option><option>S.3</option><option>S.4</option></select></div>
-                <div class="form-group"><label>Gender</label><select id="newGender"><option>Male</option><option>Female</option></select></div>
-            </div>
-            <div class="modal-buttons">
-                <button class="cancel" onclick="closeModal('addStudentModal')">Cancel</button>
-                <button class="save" onclick="addStudent()">Save</button>
-            </div>
-        </div>
-    </div>
+</div>
 
-    <script>
-        // Global State
-        let db = null;
-        let currentUser = null;
-        
-        // Initialize
-        async function init() {
-            try {
-                if (window.electronAPI) {
-                    const license = await window.electronAPI.checkLicense();
-                    if (license.activated) {
-                        db = await window.electronAPI.getDatabase();
-                        document.getElementById('activationScreen').classList.remove('active');
-                        document.getElementById('loginScreen').classList.add('active');
-                        document.getElementById('schoolBadge').textContent = license.schoolName || 'School';
-                    } else {
-                        const machineId = await window.electronAPI.getMachineId();
-                        document.getElementById('machineId').textContent = machineId;
-                    }
-                } else {
-                    // Browser mode - load default data
-                    db = getDefaultData();
-                    document.getElementById('activationScreen').classList.remove('active');
-                    document.getElementById('loginScreen').classList.add('active');
-                    document.getElementById('machineId').textContent = 'JD-DEMO-MACH-INEID (Demo Mode)';
-                }
-            } catch (e) {
-                console.log('Running in browser mode');
-                db = getDefaultData();
-                document.getElementById('activationScreen').classList.remove('active');
-                document.getElementById('loginScreen').classList.add('active');
-            }
-        }
-        
-        function getDefaultData() {
-            return {
-                settings: { schoolName: 'Demo School', currentTerm: 'Term 1', currentYear: '2024' },
-                students: [
-                    { id: 'STD001', admissionNo: 'SCH/2024/001', firstName: 'Alice', lastName: 'Nakato', class: 'S.4', stream: 'Science', gender: 'Female', dob: '2008-05-15', parentName: 'John Nakato', parentPhone: '0771234567', status: 'active' },
-                    { id: 'STD002', admissionNo: 'SCH/2024/002', firstName: 'Bob', lastName: 'Mukasa', class: 'S.4', stream: 'Science', gender: 'Male', dob: '2008-03-20', parentName: 'Mary Mukasa', parentPhone: '0782345678', status: 'active' },
-                    { id: 'STD003', admissionNo: 'SCH/2024/003', firstName: 'Carol', lastName: 'Amono', class: 'S.3', stream: 'Arts', gender: 'Female', dob: '2009-08-10', parentName: 'Peter Amono', parentPhone: '0773456789', status: 'active' },
-                    { id: 'STD004', admissionNo: 'SCH/2024/004', firstName: 'David', lastName: 'Ssemakula', class: 'S.4', stream: 'Commerce', gender: 'Male', dob: '2008-11-25', parentName: 'Grace Ssemakula', parentPhone: '0784567890', status: 'active' }
-                ],
-                staff: [
-                    { id: 'STF001', staffNo: 'TCH001', firstName: 'Kigozi', lastName: 'John', role: 'Teacher', subjects: ['Mathematics'], classes: ['S.4'], gender: 'Male', phone: '0771111111', status: 'active' },
-                    { id: 'STF002', staffNo: 'TCH002', firstName: 'Nakato', lastName: 'Sarah', role: 'HOD', subjects: ['English'], classes: ['S.1-S.4'], gender: 'Female', phone: '0772222222', status: 'active' }
-                ],
-                subjects: [
-                    { id: 'SUB001', code: 'MATH', name: 'Mathematics', teacher: 'Kigozi John', classes: ['S.1-S.6'] },
-                    { id: 'SUB002', code: 'ENG', name: 'English', teacher: 'Nakato Sarah', classes: ['S.1-S.4'] },
-                    { id: 'SUB003', code: 'PHY', name: 'Physics', teacher: '', classes: ['S.4-S.6'] },
-                    { id: 'SUB004', code: 'CHEM', name: 'Chemistry', teacher: '', classes: ['S.4-S.6'] }
-                ],
-                classes: [
-                    { name: 'S.1', streams: ['North', 'South'] },
-                    { name: 'S.2', streams: ['North', 'South'] },
-                    { name: 'S.3', streams: ['Arts', 'Science'] },
-                    { name: 'S.4', streams: ['Science', 'Commerce', 'Arts'] }
-                ],
-                fees: [
-                    { class: 'S.1', amount: 800000, description: 'Tuition Fee', term: 'all' },
-                    { class: 'S.2', amount: 850000, description: 'Tuition Fee', term: 'all' },
-                    { class: 'S.4', amount: 1200000, description: 'Tuition Fee', term: 'all' }
-                ],
-                payments: [
-                    { id: 'PAY001', studentId: 'STD001', amount: 1200000, date: '2024-01-15', method: 'cash', reference: '', term: 'Term 1', year: '2024' },
-                    { id: 'PAY002', studentId: 'STD002', amount: 600000, date: '2024-01-18', method: 'mpesa', reference: 'MG8X2K9L', term: 'Term 1', year: '2024' }
-                ],
-                marks: [
-                    { studentId: 'STD001', subject: 'Mathematics', cat1: 18, cat2: 19, exam: 48, total: 85, grade: 'A' },
-                    { studentId: 'STD001', subject: 'English', cat1: 15, cat2: 16, exam: 42, total: 73, grade: 'B+' },
-                    { studentId: 'STD002', subject: 'Mathematics', cat1: 14, cat2: 15, exam: 38, total: 67, grade: 'B' }
-                ],
-                library: [
-                    { isbn: '978-0-12', title: 'Advanced Mathematics', author: 'J. Smith', copies: 25, available: 20, category: 'Mathematics' }
-                ],
-                announcements: [
-                    { title: 'Term 1 Opening', message: 'School opens on Monday 15th January 2024', date: '2024-01-10' }
-                ]
-            };
-        }
-        
-        // Activation
-        async function activateLicense() {
-            const key = document.getElementById('licenseKey').value.trim();
-            const school = document.getElementById('schoolName').value.trim();
-            if (!key || !school) {
-                document.getElementById('activationError').style.display = 'block';
-                document.getElementById('activationError').textContent = 'Please enter both fields';
-                return;
-            }
-            if (window.electronAPI) {
-                const result = await window.electronAPI.validateLicense(key);
-                if (result.valid) {
-                    await window.electronAPI.activateSchool(school);
-                    db = await window.electronAPI.getDatabase();
-                    document.getElementById('activationScreen').classList.remove('active');
-                    document.getElementById('loginScreen').classList.add('active');
-                    document.getElementById('schoolBadge').textContent = school;
-                } else {
-                    document.getElementById('activationError').style.display = 'block';
-                    document.getElementById('activationError').textContent = 'Invalid license. Contact: 0754687597';
-                }
-            } else {
-                db = getDefaultData();
-                document.getElementById('activationScreen').classList.remove('active');
-                document.getElementById('loginScreen').classList.add('active');
-                document.getElementById('schoolBadge').textContent = school;
-            }
-        }
-        
-        // Login
-        function login() {
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-            const users = db.users || [];
-            const user = users.find(u => u.username === username && u.password === password);
-            if (user) {
-                currentUser = user;
-                document.getElementById('loginScreen').classList.remove('active');
+<!-- ADD STUDENT MODAL -->
+<div class="modal" id="addStudent">
+    <div class="modal-content">
+        <div class="modal-header"><h3>👨‍🎓 Add New Student</h3><button class="modal-close" onclick="closeModal('addStudent')">×</button></div>
+        <div class="form-grid">
+            <div class="form-group"><label>First Name</label><input type="text" class="form-input" placeholder="Enter first name"></div>
+            <div class="form-group"><label>Last Name</label><input type="text" class="form-input" placeholder="Enter last name"></div>
+            <div class="form-group"><label>Admission Number</label><input type="text" class="form-input" placeholder="SCH/2024/xxx"></div>
+            <div class="form-group"><label>Date of Birth</label><input type="date" class="form-input"></div>
+            <div class="form-group"><label>Gender</label><select class="form-select"><option>Male</option><option>Female</option></select></div>
+            <div class="form-group"><label>Class</label><select class="form-select"><option>Form 1 North</option><option>Form 1 South</option></select></div>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="showNotification('Student added!');closeModal('addStudent')">Add Student</button>
+    </div>
+</div>
+
+<!-- RECORD PAYMENT MODAL -->
+<div class="modal" id="recordPayment">
+    <div class="modal-content">
+        <div class="modal-header"><h3>💵 Record Payment</h3><button class="modal-close" onclick="closeModal('recordPayment')">×</button></div>
+        <div class="form-grid">
+            <div class="form-group"><label>Student</label><select class="form-select"><option>Select Student</option><option>Amina Wanjiku</option></select></div>
+            <div class="form-group"><label>Amount</label><input type="number" class="form-input" placeholder="Enter amount"></div>
+            <div class="form-group"><label>Payment Method</label><select class="form-select"><option>Cash</option><option>M-Pesa</option><option>Bank Transfer</option></select></div>
+            <div class="form-group"><label>Reference</label><input type="text" class="form-input" placeholder="Transaction ref (if M-Pesa)"></div>
+        </div>
+        <button class="btn btn-success" style="width:100%" onclick="showNotification('Payment recorded!');closeModal('recordPayment')">Record Payment</button>
+    </div>
+</div>
+
+<!-- ADD STAFF MODAL -->
+<div class="modal" id="addStaff">
+    <div class="modal-content">
+        <div class="modal-header"><h3>👨‍🏫 Add Staff Member</h3><button class="modal-close" onclick="closeModal('addStaff')">×</button></div>
+        <div class="form-grid">
+            <div class="form-group"><label>First Name</label><input type="text" class="form-input" placeholder="First name"></div>
+            <div class="form-group"><label>Last Name</label><input type="text" class="form-input" placeholder="Last name"></div>
+            <div class="form-group"><label>Role</label><select class="form-select"><option>Teacher</option><option>Class Teacher</option><option>Bursar</option><option>Secretary</option></select></div>
+            <div class="form-group"><label>Phone</label><input type="tel" class="form-input" placeholder="0712345678"></div>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="showNotification('Staff added!');closeModal('addStaff')">Add Staff</button>
+    </div>
+</div>
+
+<!-- ADD FEE MODAL -->
+<div class="modal" id="addFee">
+    <div class="modal-content">
+        <div class="modal-header"><h3>💰 Add Fee Item</h3><button class="modal-close" onclick="closeModal('addFee')">×</button></div>
+        <div class="form-grid">
+            <div class="form-group"><label>Fee Name</label><input type="text" class="form-input" placeholder="e.g., Tuition, Activity Fee"></div>
+            <div class="form-group"><label>Amount</label><input type="number" class="form-input" placeholder="Enter amount"></div>
+            <div class="form-group"><label>Frequency</label><select class="form-select"><option>Per Term</option><option>Per Year</option><option>One-time</option></select></div>
+            <div class="form-group"><label>Classes</label><select class="form-select"><option>All Classes</option><option>Forms 1-4</option></select></div>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="showNotification('Fee item added!');closeModal('addFee')">Add Fee</button>
+    </div>
+</div>
+
+<script>
+// Initialize
+async function init() {
+    try {
+        if (window.electronAPI) {
+            const license = await window.electronAPI.checkLicense();
+            if (license.activated) {
+                document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainApp').classList.add('active');
-                document.getElementById('userDisplay').textContent = user.name + ' (' + user.role.replace('_', ' ') + ')';
-                loadDashboard();
-            } else {
-                document.getElementById('loginError').style.display = 'block';
+                const machineId = await window.electronAPI.getMachineId();
+                document.getElementById('machineIdDisplay').textContent = machineId;
+                const portalUrl = await window.electronAPI.getPortalUrl();
+                document.getElementById('portalUrlDisplay').textContent = portalUrl;
             }
+        } else {
+            document.getElementById('loginScreen').style.display = 'flex';
         }
-        
-        function logout() {
-            currentUser = null;
-            document.getElementById('loginUsername').value = '';
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('loginError').style.display = 'none';
-            document.getElementById('mainApp').classList.remove('active');
-            document.getElementById('loginScreen').classList.add('active');
-        }
-        
-        // Navigation
-        function showModule(moduleName) {
-            document.querySelectorAll('.fade-in').forEach(el => el.style.display = 'none');
-            const module = document.getElementById(moduleName + 'Module');
-            if (module) {
-                module.style.display = 'block';
-                module.classList.add('fade-in');
-            }
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.target.closest('.nav-item').classList.add('active');
-            const titles = {
-                dashboard: 'Dashboard', students: 'Students', registration: 'Registration', marks: 'Marks Entry',
-                exams: 'Online Exams', subjects: 'Subjects', fees: 'Fees', mpesa: 'M-Pesa', staff: 'Staff',
-                reports: 'Reports', library: 'Library', attendance: 'Attendance', disciplinary: 'Disciplinary',
-                medical: 'Medical', ai: 'AI Predictions', portal: 'Parent Portal', settings: 'Settings', audit: 'Audit Log'
-            };
-            document.getElementById('moduleTitle').textContent = titles[moduleName] || moduleName;
-            
-            if (moduleName === 'dashboard') loadDashboard();
-            if (moduleName === 'students') loadStudents();
-            if (moduleName === 'marks') loadMarks();
-            if (moduleName === 'subjects') loadSubjects();
-            if (moduleName === 'fees') loadFees();
-            if (moduleName === 'staff') loadStaff();
-            if (moduleName === 'portal') loadPortal();
-            if (moduleName === 'audit') loadAudit();
-        }
-        
-        // Load Data
-        function loadDashboard() {
-            const students = db.students || [];
-            const staff = db.staff || [];
-            const payments = db.payments || [];
-            const totalRevenue = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
-            
-            document.getElementById('statStudents').textContent = students.length;
-            document.getElementById('statStaff').textContent = staff.length;
-            document.getElementById('statRevenue').textContent = (totalRevenue / 1000000).toFixed(1) + 'M';
-            document.getElementById('statClasses').textContent = (db.classes || []).length;
-            
-            // Announcements
-            const announcements = db.announcements || [];
-            let html = '';
-            announcements.slice(0, 5).forEach(a => {
-                html += '<div style="padding:15px;background:#f8fafc;border-radius:8px;margin-bottom:10px;border-left:4px solid #2563eb"><h4 style="color:#0f172a;margin-bottom:5px">' + a.title + '</h4><p style="color:#64748b;font-size:13px">' + a.message + '</p><small style="color:#94a3b8">' + a.date + '</small></div>';
-            });
-            document.getElementById('announcementsList').innerHTML = html || '<p style="color:#64748b">No announcements</p>';
-        }
-        
-        function loadStudents() {
-            const students = db.students || [];
-            let html = '';
-            students.forEach(s => {
-                html += '<tr><td>' + s.id + '</td><td>' + s.admissionNo + '</td><td>' + s.firstName + ' ' + s.lastName + '</td><td>' + s.class + '</td><td>' + s.stream + '</td><td>' + s.gender + '</td><td><span class="badge green">Active</span></td><td><button class="add-btn blue" style="padding:4px 8px;font-size:12px">Edit</button></td></tr>';
-            });
-            document.getElementById('studentsTable').innerHTML = html || '<tr><td colspan="8">No students found</td></tr>';
-        }
-        
-        function loadMarks() {
-            const students = db.students || [];
-            const marks = db.marks || [];
-            let html = '';
-            students.filter(s => s.class === 'S.4').forEach(s => {
-                const m = marks.find(mk => mk.studentId === s.id && mk.subject === 'Mathematics') || { cat1: 0, cat2: 0, exam: 0, total: 0, grade: '-' };
-                html += '<tr><td>' + s.admissionNo + '</td><td>' + s.firstName + ' ' + s.lastName + '</td><td><input type="number" value="' + m.cat1 + '" style="width:60px;padding:6px;border:1px solid #e5e7eb;border-radius:4px"></td><td><input type="number" value="' + m.cat2 + '" style="width:60px;padding:6px;border:1px solid #e5e7eb;border-radius:4px"></td><td><input type="number" value="' + m.exam + '" style="width:60px;padding:6px;border:1px solid #e5e7eb;border-radius:4px"></td><td>' + m.total + '</td><td><span class="badge ' + (m.grade === 'A' ? 'green' : m.grade === 'B+' || m.grade === 'B' ? 'blue' : 'orange') + '">' + m.grade + '</span></td><td><button class="add-btn" style="padding:4px 8px;font-size:12px">Save</button></td></tr>';
-            });
-            document.getElementById('marksTable').innerHTML = html;
-        }
-        
-        function loadSubjects() {
-            const subjects = db.subjects || [];
-            let html = '';
-            subjects.forEach(s => {
-                html += '<tr><td>' + s.code + '</td><td>' + s.name + '</td><td>' + s.teacher + '</td><td>' + s.classes.join(', ') + '</td><td><button class="add-btn blue" style="padding:4px 8px;font-size:12px">Edit</button></td></tr>';
-            });
-            document.getElementById('subjectsTable').innerHTML = html || '<tr><td colspan="5">No subjects</td></tr>';
-        }
-        
-        function loadFees() {
-            const fees = db.fees || [];
-            let html = '';
-            fees.forEach(f => {
-                html += '<tr><td>' + f.class + '</td><td>UGX ' + f.amount.toLocaleString() + '</td><td>' + f.description + '</td><td>' + f.term + '</td><td><button class="add-btn blue" style="padding:4px 8px;font-size:12px">Edit</button></td></tr>';
-            });
-            document.getElementById('feesTable').innerHTML = html || '<tr><td colspan="5">No fees defined</td></tr>';
-            
-            const payments = db.payments || [];
-            html = '';
-            payments.forEach(p => {
-                const student = (db.students || []).find(s => s.id === p.studentId);
-                html += '<tr><td>' + p.date + '</td><td>' + (student ? student.firstName + ' ' + student.lastName : p.studentId) + '</td><td>UGX ' + p.amount.toLocaleString() + '</td><td>' + p.method + '</td><td>' + p.reference + '</td><td>' + p.term + '</td></tr>';
-            });
-            document.getElementById('paymentsTable').innerHTML = html || '<tr><td colspan="6">No payments</td></tr>';
-        }
-        
-        function loadStaff() {
-            const staff = db.staff || [];
-            let html = '';
-            staff.forEach(s => {
-                html += '<tr><td>' + s.staffNo + '</td><td>' + s.firstName + ' ' + s.lastName + '</td><td>' + s.role + '</td><td>' + s.subjects.join(', ') + '</td><td>' + s.classes.join(', ') + '</td><td>' + s.phone + '</td><td><span class="badge green">Active</span></td></tr>';
-            });
-            document.getElementById('staffTable').innerHTML = html || '<tr><td colspan="7">No staff</td></tr>';
-        }
-        
-        async function loadPortal() {
-            let url = 'http://localhost:8080';
-            if (window.electronAPI) {
-                url = await window.electronAPI.getPortalUrl();
-            }
-            document.getElementById('portalUrl').textContent = url;
-        }
-        
-        async function loadAudit() {
-            let logs = [];
-            if (window.electronAPI) {
-                logs = await window.electronAPI.getAuditLog();
-            }
-            let html = '';
-            logs.slice(0, 50).forEach(log => {
-                html += '<tr><td>' + new Date(log.timestamp).toLocaleString() + '</td><td>' + log.action + '</td><td>' + log.user + '</td><td>' + log.details + '</td></tr>';
-            });
-            document.getElementById('auditTable').innerHTML = html || '<tr><td colspan="4">No audit logs</td></tr>';
-        }
-        
-        // Actions
-        function registerStudent() {
-            const firstName = document.getElementById('regFirstName').value;
-            const lastName = document.getElementById('regLastName').value;
-            if (!firstName || !lastName) {
-                alert('Please fill required fields');
-                return;
-            }
-            const newId = 'STD' + String((db.students || []).length + 1).padStart(3, '0');
-            const admissionNo = 'SCH/' + (db.settings?.currentYear || '2024') + '/' + newId.substring(3);
-            const student = {
-                id: newId, admissionNo: admissionNo, firstName, lastName,
-                class: document.getElementById('regClass').value || 'S.1',
-                stream: document.getElementById('regStream').value || 'Science',
-                gender: document.getElementById('regGender').value || 'Male',
-                dob: document.getElementById('regDob').value,
-                parentName: document.getElementById('regParent').value,
-                parentPhone: document.getElementById('regPhone').value,
-                status: 'active'
-            };
-            db.students.push(student);
-            if (window.electronAPI) window.electronAPI.saveStudents(db.students);
-            alert('Student registered! ID: ' + admissionNo);
-            showModule('students');
-        }
-        
-        function showAddStudentModal() {
-            document.getElementById('addStudentModal').classList.add('active');
-        }
-        
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-        
-        function addStudent() {
-            const firstName = document.getElementById('newFirstName').value;
-            const lastName = document.getElementById('newLastName').value;
-            if (firstName && lastName) {
-                const newId = 'STD' + String((db.students || []).length + 1).padStart(3, '0');
-                db.students.push({
-                    id: newId, admissionNo: 'SCH/2024/' + newId.substring(3),
-                    firstName, lastName,
-                    class: document.getElementById('newClass').value,
-                    stream: 'Science', gender: document.getElementById('newGender').value,
-                    status: 'active'
-                });
-                if (window.electronAPI) window.electronAPI.saveStudents(db.students);
-                closeModal('addStudentModal');
-                loadStudents();
-            }
-        }
-        
-        async function saveSettings() {
-            const settings = {
-                schoolName: document.getElementById('setSchoolName').value,
-                currentTerm: document.getElementById('setTerm').value,
-                currentYear: document.getElementById('setYear').value
-            };
-            if (window.electronAPI) {
-                await window.electronAPI.saveSettings(settings);
-            }
-            alert('Settings saved!');
-        }
-        
-        async function exportDatabase() {
-            if (window.electronAPI) {
-                const result = await window.electronAPI.exportDatabase();
-                if (result.success) alert('Database exported!');
-            }
-        }
-        
-        async function importDatabase() {
-            if (window.electronAPI) {
-                const result = await window.electronAPI.importDatabase();
-                if (result.success) {
-                    db = await window.electronAPI.getDatabase();
-                    alert('Database imported!');
-                    loadDashboard();
-                }
-            }
-        }
-        
-        async function backupUSB() {
-            if (window.electronAPI) {
-                const result = await window.electronAPI.backupToUsb();
-                if (result.success) alert('Backup saved to USB!');
-            }
-        }
-        
-        // Enter key login
-        document.getElementById('loginPassword').addEventListener('keypress', e => { if (e.key === 'Enter') login(); });
-        
-        init();
-    </script>
+    } catch (e) {
+        document.getElementById('loginScreen').style.display = 'flex';
+    }
+}
+
+// Login
+function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const users = {
+        'jordan': { password: 'jordan123', name: 'Jordan', role: 'Super Admin' },
+        'headteacher': { password: 'pass123', name: 'Mrs. Sarah Kamau', role: 'Head Teacher' },
+        'bursar': { password: 'pass123', name: 'Mrs. Mary Wanjiku', role: 'Bursar' },
+        'teacher1': { password: 'pass123', name: 'Mr. John Ochieng', role: 'Teacher' },
+        'dos': { password: 'pass123', name: 'Mr. Peter Odhiambo', role: 'Director of Studies' },
+        'secretary': { password: 'pass123', name: 'Miss Jane Doe', role: 'Secretary' }
+    };
+    if (users[username] && users[username].password === password) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').classList.add('active');
+        document.getElementById('userName').textContent = users[username].name;
+        document.getElementById('userRole').textContent = users[username].role;
+        document.getElementById('userAvatar').textContent = users[username].name.charAt(0);
+        showNotification('Welcome back, ' + users[username].name + '!');
+    } else {
+        alert('Invalid credentials!\n\nTry: Jordan / admin123\nOr: headteacher / pass123');
+    }
+}
+
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        document.getElementById('mainApp').classList.remove('active');
+        document.getElementById('loginScreen').style.display = 'flex';
+    }
+}
+
+function showSection(sectionId, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(sectionId).classList.add('active');
+    document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    const titles = {
+        'dashboard':'📊 Dashboard','students':'👨‍🎓 Students','staff':'👨‍🏫 Staff','academics':'📚 Academics','exams':'📝 Exams','fees':'💰 Fees',
+        'attendance':'✅ Attendance','reports':'📄 Reports','library':'📖 Library','transport':'🚌 Transport','messages':'✉️ Messages',
+        'disciplinary':'⚠️ Discipline','medical':'🏥 Medical','portal':'📱 Parent Portal','settings':'⚙️ Settings'
+    };
+    document.getElementById('pageTitle').textContent = titles[sectionId] || 'Dashboard';
+}
+
+function showNotification(message) {
+    const notif = document.getElementById('notification');
+    notif.textContent = message;
+    notif.classList.add('show');
+    setTimeout(() => notif.classList.remove('show'), 3000);
+}
+
+function openModal(modalId) { document.getElementById(modalId).classList.add('active'); }
+function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
+
+document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') login();
+});
+
+init();
+</script>
 </body>
 </html>
